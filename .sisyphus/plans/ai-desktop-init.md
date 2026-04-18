@@ -1889,7 +1889,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `AGENTS.md` (或 `.sisyphus/AGENTS.md` 层级结构)
   - Pre-commit: 无
 
-- [ ] 20. 清理 + 最终验证
+- [x] 20. 清理 + 最终验证
 
   **What to do**:
   - 删除所有临时/调试代码（console.log 等）
