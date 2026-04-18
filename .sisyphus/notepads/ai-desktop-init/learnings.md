@@ -18,3 +18,10 @@
 - Scaffold generates `start` script (not `preview`) for `electron-vite preview` — this is the default convention
 - LSP may report false positives on `.vue` imports; `npm run build` (which includes typecheck) is the truth
 - Scaffold package name derives from directory name (e.g., `electron-scaffold` from `/tmp/electron-scaffold`)
+
+## Task 2: Dependencies Installation
+- better-sqlite3 is a native module requiring `electron-builder install-app-deps` to rebuild for Electron
+- `npm install` with electron postinstall can timeout (>5min); use `--ignore-scripts` + manual `npx electron-builder install-app-deps` as fallback
+- npm adds `^` by default; must post-process package.json to strip prefixes
+- lodash.isequal@4.5.0 is deprecated (comes as transitive dep of electron-updater) - non-blocking
+- Installed versions: vue-router 4.6.4, pinia 2.3.1, better-sqlite3 12.9.0, electron-updater 6.8.3, tailwindcss 4.2.2, vitest 4.1.4, @playwright/test 1.59.1

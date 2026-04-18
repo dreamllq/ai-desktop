@@ -18,6 +18,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-18T05:13:08.423Z"
+    },
+    "todo:2": {
+      "task_key": "todo:2",
+      "task_label": "2",
+      "task_title": "安装额外依赖 + 版本锁定",
+      "session_id": "ses_260fb1d0effeWBXasXU4xFQHqO",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-18T05:28:19.531Z"
     }
   }
 }

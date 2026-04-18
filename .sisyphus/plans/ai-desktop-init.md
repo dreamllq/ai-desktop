@@ -324,7 +324,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: 全部脚手架生成文件
   - Pre-commit: `npm run build`
 
-- [ ] 2. 安装额外依赖 + 版本锁定
+- [x] 2. 安装额外依赖 + 版本锁定
 
   **What to do**:
   - 安装核心依赖（精确版本，不使用 ^ 或 ~）：
