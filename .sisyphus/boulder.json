@@ -144,6 +144,15 @@
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "updated_at": "2026-04-18T06:17:07.034Z"
+    },
+    "todo:16": {
+      "task_key": "todo:16",
+      "task_label": "16",
+      "task_title": "Vitest 测试基础设施 + 示例测试",
+      "session_id": "ses_260c2be02ffeDqUGQoQWX68P3z",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-04-18T06:23:48.599Z"
     }
   }
 }

@@ -91,6 +91,7 @@
 - Database initialized AFTER registerIpcHandlers() — handlers reference DatabaseService.getInstance() so DB must be ready before any IPC call
 
 ## Task 8: Vue Router Configuration
+
 - Electron apps MUST use `createWebHashHistory()` — `createWebHistory()` (HTML5 mode) doesn't work in Electron because there's no server to handle fallbacks
 - Lazy loading routes via `() => import(...)` keeps initial bundle small
 - TypeScript strict mode flags unused variables (TS6133) — only import composables when actually using destructured values
@@ -153,7 +154,18 @@
 - `npm run build` runs typecheck (tsc + vue-tsc) then electron-vite build — all must pass
 
 ## Task 15: Global Exception Handling & CSP
+
 - Electron 39 removed `webContents.on('crashed')` event — use only `render-process-gone` instead
 - CSP meta tag was already present in index.html (with correct `unsafe-inline` for TailwindCSS v4)
 - `process.on('uncaughtException')` and `process.on('unhandledRejection')` should be registered early, before `app.requestSingleInstanceLock()`
 - Electron DevTools are not accessible by default in packaged production builds, no extra protection needed
+
+## Task 16: Vitest Testing Infrastructure
+
+- better-sqlite3 native module compiled for Electron (NODE_MODULE_VERSION 140) doesn't work with system Node.js (NODE_MODULE_VERSION 127) in vitest — must mock it
+- `vi.mock()` is hoisted by vitest ABOVE all static imports — so `import Database from 'better-sqlite3'` after `vi.mock(...)` gets the mocked version
+- Mock constructor must use `function` (not arrow function) to be callable with `new` — `vi.fn(function() { this.x = ... })` pattern
+- Side-effect import (`import './__mocks__/...'`) does NOT properly hoist `vi.mock()` — always put `vi.mock()` directly in the test file
+- Pinia store testing: `setActivePinia(createPinia())` in `beforeEach` isolates state between tests
+- Vue composables testing in happy-dom: mock `window.api` via `(window as unknown as Record<string, unknown>).api = mockApi`
+- vitest.config.ts needs `@vitejs/plugin-vue` and `resolve.alias` matching the project's path aliases (@renderer, @shared)

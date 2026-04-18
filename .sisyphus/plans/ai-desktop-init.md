@@ -1569,7 +1569,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/main/index.ts`, `src/renderer/index.html`
   - Pre-commit: `npm run build`
 
-- [ ] 16. Vitest 测试基础设施 + 示例测试
+- [x] 16. Vitest 测试基础设施 + 示例测试
 
   **What to do**:
   - 创建 `vitest.config.ts`（或 vitest.workspace.ts）：
