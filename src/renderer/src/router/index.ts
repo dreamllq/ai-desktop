@@ -10,8 +10,23 @@ const router = createRouter({
     },
     {
       path: '/settings',
-      name: 'settings',
       component: () => import('@renderer/views/Settings.vue'),
+      children: [
+        {
+          path: '',
+          redirect: '/settings/llm',
+        },
+        {
+          path: 'general',
+          name: 'settings-general',
+          component: () => import('@renderer/views/settings/GeneralSettings.vue'),
+        },
+        {
+          path: 'llm',
+          name: 'settings-llm',
+          component: () => import('@renderer/views/settings/LlmSettings.vue'),
+        },
+      ],
     },
   ],
 })
