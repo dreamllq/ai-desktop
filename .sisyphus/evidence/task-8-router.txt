@@ -1,0 +1,18 @@
+Task: Configure Vue Router with hash mode for Electron app
+
+Files updated:
+1. src/renderer/src/router/index.ts — createWebHashHistory with Home and Settings routes (lazy loading)
+2. src/renderer/src/views/Home.vue — Basic welcome content
+3. src/renderer/src/views/Settings.vue — Basic settings content
+4. src/renderer/src/main.ts — Added router plugin via .use(router)
+5. src/renderer/src/App.vue — Replaced with <RouterView />
+
+Build: PASS
+- typecheck: PASS
+- electron-vite build: PASS (all 3 bundles: main, preload, renderer)
+
+Key decisions:
+- Used createWebHashHistory() (required for Electron, createWebHistory doesn't work)
+- Lazy loading for routes via dynamic import()
+- Removed unused useElectron import from Home.vue to pass strict TS typecheck (TS6133)
+- App.vue simplified to just <RouterView /> since routing now handles view rendering

@@ -89,3 +89,10 @@
 - `INSERT OR REPLACE` is SQLite-specific upsert — simpler than separate INSERT/UPDATE logic
 - DatabaseService.close() must be called in `app.on('will-quit')` — ensures clean shutdown before process exit
 - Database initialized AFTER registerIpcHandlers() — handlers reference DatabaseService.getInstance() so DB must be ready before any IPC call
+
+## Task 8: Vue Router Configuration
+- Electron apps MUST use `createWebHashHistory()` — `createWebHistory()` (HTML5 mode) doesn't work in Electron because there's no server to handle fallbacks
+- Lazy loading routes via `() => import(...)` keeps initial bundle small
+- TypeScript strict mode flags unused variables (TS6133) — only import composables when actually using destructured values
+- When adding router, App.vue must be updated to use `<RouterView />` to render route components
+- `@renderer` alias maps to `src/renderer/src/` — use it for cross-module imports in routes

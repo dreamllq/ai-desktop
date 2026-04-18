@@ -889,7 +889,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/main/database/index.ts`, `src/main/ipc/index.ts`, `src/main/index.ts`
   - Pre-commit: `npm run build`
 
-- [ ] 8. Vue Router 路由配置
+- [x] 8. Vue Router 路由配置
 
   **What to do**:
   - 创建 `src/renderer/src/router/index.ts`：

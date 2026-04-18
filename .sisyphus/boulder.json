@@ -72,6 +72,15 @@
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
       "updated_at": "2026-04-18T05:51:47.370Z"
+    },
+    "todo:8": {
+      "task_key": "todo:8",
+      "task_label": "8",
+      "task_title": "Vue Router 路由配置",
+      "session_id": "ses_260d9fc0dffea6Slh63b85BODD",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-18T05:54:41.714Z"
     }
   }
 }
