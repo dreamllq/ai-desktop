@@ -1,4 +1,10 @@
-import type { AppInfo, CustomAPI } from '@shared/types'
+import type {
+  AppInfo,
+  CustomAPI,
+  LlmProviderCreate,
+  LlmProviderListItem,
+  LlmProviderUpdate,
+} from '@shared/types'
 
 export function useElectron(): CustomAPI {
   const api = window.api
@@ -27,5 +33,57 @@ export function useElectron(): CustomAPI {
     return api.openAbout()
   }
 
-  return { ping, getAppInfo, getSetting, setSetting, openSettings, openAbout }
+  function listProviders() {
+    return api.listProviders() as Promise<{
+      success: boolean
+      data?: LlmProviderListItem[]
+      error?: string
+    }>
+  }
+
+  function getProvider(id: string) {
+    return api.getProvider(id) as Promise<{
+      success: boolean
+      data?: LlmProviderListItem
+      error?: string
+    }>
+  }
+
+  function createProvider(data: LlmProviderCreate) {
+    return api.createProvider(data) as Promise<{
+      success: boolean
+      data?: string
+      error?: string
+    }>
+  }
+
+  function updateProvider(id: string, updates: LlmProviderUpdate) {
+    return api.updateProvider(id, updates) as Promise<{
+      success: boolean
+      data?: boolean
+      error?: string
+    }>
+  }
+
+  function deleteProvider(id: string) {
+    return api.deleteProvider(id) as Promise<{
+      success: boolean
+      data?: boolean
+      error?: string
+    }>
+  }
+
+  return {
+    ping,
+    getAppInfo,
+    getSetting,
+    setSetting,
+    openSettings,
+    openAbout,
+    listProviders,
+    getProvider,
+    createProvider,
+    updateProvider,
+    deleteProvider,
+  }
 }
