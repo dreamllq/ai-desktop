@@ -1482,7 +1482,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/main/updater.ts`, `electron-builder.yml`, `src/main/tray.ts`
   - Pre-commit: `npm run build`
 
-- [ ] 15. 异常处理 + CSP 安全策略
+- [x] 15. 异常处理 + CSP 安全策略
 
   **What to do**:
   - 在 `src/main/index.ts` 中添加全局异常处理：

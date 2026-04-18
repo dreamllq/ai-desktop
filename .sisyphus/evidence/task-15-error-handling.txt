@@ -1,0 +1,19 @@
+Task 15: Global Exception Handling & CSP Security Policy
+=========================================================
+
+Changes made:
+
+1. src/main/index.ts - Added global exception handlers (lines 9-15):
+   - process.on('uncaughtException') - logs uncaught exceptions
+   - process.on('unhandledRejection') - logs unhandled promise rejections
+   - webContents 'render-process-gone' handler (lines 43-45) - logs renderer crash reasons
+
+2. src/renderer/index.html - CSP meta tag already existed:
+   - default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:
+
+Notes:
+- Electron 39 removed the 'crashed' event on webContents; using 'render-process-gone' only
+- 'unsafe-inline' required for TailwindCSS v4 inline styles
+- No DevTools production protection added (Electron doesn't expose DevTools API in production by default when packaged)
+
+Build: PASSED (npm run build - typecheck + electron-vite build all succeeded)

@@ -151,3 +151,9 @@
 - Added `output: dist` to directories for explicit build output path
 - mac section needed `category: public.app-category.productivity` and `target: dmg` for auto-update DMG support
 - `npm run build` runs typecheck (tsc + vue-tsc) then electron-vite build — all must pass
+
+## Task 15: Global Exception Handling & CSP
+- Electron 39 removed `webContents.on('crashed')` event — use only `render-process-gone` instead
+- CSP meta tag was already present in index.html (with correct `unsafe-inline` for TailwindCSS v4)
+- `process.on('uncaughtException')` and `process.on('unhandledRejection')` should be registered early, before `app.requestSingleInstanceLock()`
+- Electron DevTools are not accessible by default in packaged production builds, no extra protection needed

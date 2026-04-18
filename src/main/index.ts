@@ -6,6 +6,14 @@ import { DatabaseService } from './database'
 import { createTray } from './tray'
 import { registerHotkeys, unregisterAllHotkeys } from './hotkey'
 
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error)
+})
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection:', reason)
+})
+
 const gotTheLock = app.requestSingleInstanceLock()
 
 if (!gotTheLock) {
@@ -31,6 +39,10 @@ if (!gotTheLock) {
     DatabaseService.getInstance().initialize()
 
     const mainWindow = createMainWindow()
+
+    mainWindow.webContents.on('render-process-gone', (_event, details) => {
+      console.error('Render process gone:', details.reason)
+    })
 
     mainWindow.on('close', (event) => {
       if (process.platform === 'win32') {

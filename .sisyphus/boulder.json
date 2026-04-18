@@ -135,6 +135,15 @@
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
       "updated_at": "2026-04-18T06:14:45.478Z"
+    },
+    "todo:15": {
+      "task_key": "todo:15",
+      "task_label": "15",
+      "task_title": "异常处理 + CSP 安全策略",
+      "session_id": "ses_260c54763ffebtSWufT3i8MQ84",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-18T06:17:07.034Z"
     }
   }
 }
