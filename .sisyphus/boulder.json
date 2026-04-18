@@ -63,6 +63,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-18T05:47:12.052Z"
+    },
+    "todo:7": {
+      "task_key": "todo:7",
+      "task_label": "7",
+      "task_title": "SQLite 数据层",
+      "session_id": "ses_260de09aeffeHHa21LZg08Jf2w",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-04-18T05:51:47.370Z"
     }
   }
 }

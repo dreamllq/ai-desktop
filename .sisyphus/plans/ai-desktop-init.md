@@ -792,7 +792,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/shared/types/index.ts`, `src/main/ipc/index.ts`, `src/preload/index.ts`, `src/preload/index.d.ts`, `src/renderer/src/composables/useElectron.ts`
   - Pre-commit: `npx vue-tsc --noEmit`
 
-- [ ] 7. SQLite 数据层
+- [x] 7. SQLite 数据层
 
   **What to do**:
   - 创建 `src/main/database/index.ts` — 数据库服务类：

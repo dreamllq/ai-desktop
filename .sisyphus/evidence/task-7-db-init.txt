@@ -1,0 +1,43 @@
+
+> ai-desktop@1.0.0 build
+> npm run typecheck && electron-vite build
+
+
+> ai-desktop@1.0.0 typecheck
+> npm run typecheck:node && npm run typecheck:web
+
+
+> ai-desktop@1.0.0 typecheck:node
+> tsc --noEmit -p tsconfig.node.json --composite false
+
+
+> ai-desktop@1.0.0 typecheck:web
+> vue-tsc --noEmit -p tsconfig.web.json --composite false
+
+vite v7.2.6 building ssr environment for production...
+transforming...
+✓ 6 modules transformed.
+rendering chunks...
+out/main/index.js  3.73 kB
+✓ built in 42ms
+vite v7.2.6 building ssr environment for production...
+transforming...
+✓ 2 modules transformed.
+rendering chunks...
+out/preload/index.js  0.87 kB
+✓ built in 7ms
+vite v7.2.6 building client environment for production...
+transforming...
+✓ 13 modules transformed.
+rendering chunks...
+../../out/renderer/index.html                      0.55 kB
+../../out/renderer/assets/electron-DtwWEc_u.svg    5.82 kB
+../../out/renderer/assets/index-DYKlvrFZ.css       6.74 kB
+../../out/renderer/assets/index-DzTH6_Wv.js      175.16 kB
+✓ built in 258ms
+
+=== Installed @types/better-sqlite3 ===
+ai-desktop@1.0.0 /Users/llq/Documents/origin/ai-desktop
+├── @types/better-sqlite3@7.6.13
+└── better-sqlite3@12.9.0
+

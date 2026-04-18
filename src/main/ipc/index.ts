@@ -1,6 +1,7 @@
 import { ipcMain, app } from 'electron'
 import { IPC_CHANNELS } from '@shared/types'
 import type { AppInfo } from '@shared/types'
+import { DatabaseService } from '../database'
 
 export function registerIpcHandlers(): void {
   ipcMain.handle(IPC_CHANNELS.PING, () => 'pong')
@@ -16,9 +17,11 @@ export function registerIpcHandlers(): void {
     }
   })
 
-  ipcMain.handle(IPC_CHANNELS.GET_SETTING, (_event, _key: string): null => {
-    return null
+  ipcMain.handle(IPC_CHANNELS.GET_SETTING, (_event, key: string): string | null => {
+    return DatabaseService.getInstance().getSetting(key)
   })
 
-  ipcMain.handle(IPC_CHANNELS.SET_SETTING, (_event, _key: string, _value: string): void => {})
+  ipcMain.handle(IPC_CHANNELS.SET_SETTING, (_event, key: string, value: string): void => {
+    DatabaseService.getInstance().setSetting(key, value)
+  })
 }

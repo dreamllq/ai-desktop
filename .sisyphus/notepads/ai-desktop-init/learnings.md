@@ -78,3 +78,14 @@
 - `window.api` in `index.d.ts` now typed as `CustomAPI` instead of `unknown` — end-to-end type safety
 - `useElectron` composable now returns `CustomAPI` directly — no more untyped `send/invoke/on` wrappers
 - Settings handlers are placeholders (return null / no-op) — will be connected to DB in Task 7
+
+## Task 7: SQLite Data Layer
+
+- better-sqlite3 requires `@types/better-sqlite3` (v7.6.13) for TypeScript — install as devDependency
+- better-sqlite3 is synchronous by design — no async/await needed, all operations return immediately
+- Singleton pattern: private constructor + static getInstance() — app.getPath('userData') provides platform-appropriate data dir
+- `Database` type from better-sqlite3 is `Database.Database` (namespace pattern) — used as field type annotation
+- WAL mode enabled via `this.db.pragma('journal_mode = WAL')` — better for concurrent reads in Electron
+- `INSERT OR REPLACE` is SQLite-specific upsert — simpler than separate INSERT/UPDATE logic
+- DatabaseService.close() must be called in `app.on('will-quit')` — ensures clean shutdown before process exit
+- Database initialized AFTER registerIpcHandlers() — handlers reference DatabaseService.getInstance() so DB must be ready before any IPC call

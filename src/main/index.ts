@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createWindow } from './windows'
 import { registerIpcHandlers } from './ipc'
+import { DatabaseService } from './database'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -25,6 +26,8 @@ if (!gotTheLock) {
 
     registerIpcHandlers()
 
+    DatabaseService.getInstance().initialize()
+
     createWindow()
 
     app.on('activate', function () {
@@ -36,5 +39,9 @@ if (!gotTheLock) {
     if (process.platform !== 'darwin') {
       app.quit()
     }
+  })
+
+  app.on('will-quit', () => {
+    DatabaseService.getInstance().close()
   })
 }
