@@ -960,7 +960,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/renderer/src/router/index.ts`, `src/renderer/src/views/Home.vue`, `src/renderer/src/views/Settings.vue`, `src/renderer/src/main.ts`
   - Pre-commit: `npx vue-tsc --noEmit`
 
-- [ ] 9. Pinia 状态管理
+- [x] 9. Pinia 状态管理
 
   **What to do**:
   - 创建 `src/renderer/src/stores/app.ts` — 应用级 Store：

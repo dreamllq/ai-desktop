@@ -96,3 +96,11 @@
 - TypeScript strict mode flags unused variables (TS6133) — only import composables when actually using destructured values
 - When adding router, App.vue must be updated to use `<RouterView />` to render route components
 - `@renderer` alias maps to `src/renderer/src/` — use it for cross-module imports in routes
+
+## Task 9: Pinia State Management
+
+- Pinia Setup API uses `defineStore('name', () => { ... })` with `ref()` — NOT the `defineStore('name', { state, actions })` Options API pattern
+- Pinia must be registered via `app.use(createPinia())` BEFORE router and mount
+- Store initialize() can be called directly in `<script setup>` — runs on component mount, no need for onMounted()
+- Async initialize() pattern is future-proof for IPC calls even though current implementation is synchronous
+- Build passes with zero errors after converting from Options API to Setup API store pattern

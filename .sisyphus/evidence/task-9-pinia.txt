@@ -1,0 +1,31 @@
+Task 9: Pinia State Management (Setup API)
+=============================================
+
+## Files Changed
+
+1. src/renderer/src/stores/app.ts
+   - Converted from Options API (defineStore with state/actions object) to Setup API (defineStore with function)
+   - Uses ref() for reactive state: appName, version, isInitialized
+   - Exposes async initialize() function
+
+2. src/renderer/src/main.ts
+   - Added `import { createPinia } from 'pinia'`
+   - Registers Pinia via `app.use(createPinia())` before router
+
+3. src/renderer/src/App.vue
+   - Added `<script setup lang="ts">` block
+   - Imports useAppStore, calls store.initialize() on setup
+
+## Build Result
+
+npm run build — PASSED
+- typecheck:node (tsc) — PASSED
+- typecheck:web (vue-tsc) — PASSED
+- electron-vite build (main, preload, renderer) — PASSED
+
+## Key Details
+
+- Pinia 2.3.1 (not 3.x)
+- Setup API pattern: defineStore('app', () => { ... }) with ref()
+- Single store: 'app'
+- No better-sqlite3 dependency in store
