@@ -35,10 +35,10 @@ interface MockDb {
 }
 
 vi.mock('better-sqlite3', () => ({
-  default: vi.fn(function (_path: string) {
+  default: vi.fn(function () {
     const store = new Map<string, string>()
     this.pragma = vi.fn()
-    this.exec = vi.fn((_sql: string) => {})
+    this.exec = vi.fn(() => {})
     this.prepare = vi.fn((sql: string) => new MockStatement(store, sql))
     this.close = vi.fn()
   }),

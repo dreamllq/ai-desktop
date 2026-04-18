@@ -1740,7 +1740,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `playwright.config.ts`, `e2e/app.spec.ts`, `e2e/helpers.ts`, `package.json`
   - Pre-commit: `npx playwright test`
 
-- [ ] 18. 完整构建验证 + 端到端测试
+- [x] 18. 完整构建验证 + 端到端测试
 
   **What to do**:
   - 执行完整构建流程验证：
