@@ -104,3 +104,15 @@
 - Store initialize() can be called directly in `<script setup>` — runs on component mount, no need for onMounted()
 - Async initialize() pattern is future-proof for IPC calls even though current implementation is synchronous
 - Build passes with zero errors after converting from Options API to Setup API store pattern
+
+## Task 10: TailwindCSS v4 & Base Layout
+
+- TailwindCSS v4 uses `@tailwindcss/vite` plugin — import from `@tailwindcss/vite`, add to renderer plugins array after `vue()`
+- CSS entry is just `@import "tailwindcss"` — no `@tailwind` directives, no `@tailwind base/components/utilities`
+- No `tailwind.config.js/ts` needed — v4 is zero-config by default
+- Replaced all scaffold CSS (base.css imports, electron styles, media queries) with single `@import "tailwindcss"` line
+- Tailwind v4 utility classes work immediately in Vue SFC templates — no additional setup
+- `router-link-active` class (applied to all ancestor routes) vs `router-link-exact-active` (exact match only) — used both for reliable active styling
+- Vue SFC `[&.router-link-active]` syntax works in Tailwind v4 for targeting dynamic classes on same element
+- Layout pattern: AppLayout owns flex container + imports AppSidebar, uses `<slot />` for content
+- AppLayout uses `w-screen h-screen` for full viewport, `overflow-hidden` on container, `overflow-auto` on content area

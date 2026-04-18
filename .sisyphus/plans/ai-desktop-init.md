@@ -1044,7 +1044,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/renderer/src/stores/app.ts`, `src/renderer/src/main.ts`, `src/renderer/src/App.vue`
   - Pre-commit: `npx vue-tsc --noEmit`
 
-- [ ] 10. TailwindCSS v4 + 基础 UI 布局
+- [x] 10. TailwindCSS v4 + 基础 UI 布局
 
   **What to do**:
   - 更新 `electron.vite.config.ts` renderer 配置，添加 `@tailwindcss/vite` 插件

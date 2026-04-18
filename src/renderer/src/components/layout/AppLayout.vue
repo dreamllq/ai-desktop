@@ -1,5 +1,12 @@
+<script setup lang="ts">
+import AppSidebar from './AppSidebar.vue'
+</script>
+
 <template>
-  <div>
-    <slot />
+  <div class="flex h-screen w-screen overflow-hidden">
+    <AppSidebar />
+    <main class="flex-1 overflow-auto">
+      <slot />
+    </main>
   </div>
 </template>
