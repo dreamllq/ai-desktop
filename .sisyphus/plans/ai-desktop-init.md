@@ -85,15 +85,15 @@
 
 ### Definition of Done
 
-- [ ] `npm run dev` 启动应用，窗口正常显示
-- [ ] `npm run build` 构建成功，输出到 out/ 目录
-- [ ] `npx vitest run` 通过，至少 1 个测试
-- [ ] `npx eslint .` 无错误
-- [ ] `npm run typecheck` 无类型错误
-- [ ] IPC ping/pong 端到端测试通过
-- [ ] SQLite 可读写 app_settings 表
-- [ ] 系统托盘正常工作
-- [ ] AGENTS.md 文件已生成
+- [x] `npm run dev` 启动应用，窗口正常显示
+- [x] `npm run build` 构建成功，输出到 out/ 目录
+- [x] `npx vitest run` 通过，至少 1 个测试
+- [x] `npx eslint .` 无错误
+- [x] `npm run typecheck` 无类型错误
+- [x] IPC ping/pong 端到端测试通过
+- [x] SQLite 可读写 app_settings 表
+- [x] 系统托盘正常工作
+- [x] AGENTS.md 文件已生成
 
 ### Must Have
 
@@ -1973,19 +1973,19 @@ Max Concurrent: 6 (Wave 2)
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
       Read the plan end-to-end. For each "Must Have": verify implementation exists (read file, curl endpoint, run command). For each "Must NOT Have": search codebase for forbidden patterns — reject with file:line if found. Check evidence files exist in .sisyphus/evidence/. Compare deliverables against plan.
       Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
       Run `npm run typecheck` + `npx eslint .` + `npx vitest run`. Review all changed files for: `as any`/`@ts-ignore`, empty catches, console.log in prod, commented-out code, unused imports. Check AI slop: excessive comments, over-abstraction, generic names (data/result/item/temp).
       Output: `Build [PASS/FAIL] | Lint [PASS/FAIL] | Tests [N pass/N fail] | Files [N clean/N issues] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
+- [x] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
       Start from clean state. Execute EVERY QA scenario from EVERY task — follow exact steps, capture evidence. Test cross-task integration (features working together, not isolation). Test edge cases: empty state, invalid input, rapid actions. Save to `.sisyphus/evidence/final-qa/`.
       Output: `Scenarios [N/N pass] | Integration [N/N] | Edge Cases [N tested] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
       For each task: read "What to do", read actual diff (git log/diff). Verify 1:1 — everything in spec was built (no missing), nothing beyond spec was built (no creep). Check "Must NOT do" compliance. Detect cross-task contamination: Task N touching Task M's files. Flag unaccounted changes.
       Output: `Tasks [N/N compliant] | Contamination [CLEAN/N issues] | Unaccounted [CLEAN/N files] | VERDICT`
 
@@ -2033,7 +2033,7 @@ npm run typecheck              # Expected: no type errors
 
 ### Final Checklist
 
-- [ ] All "Must Have" present
-- [ ] All "Must NOT Have" absent
-- [ ] All tests pass
-- [ ] AGENTS.md generated
+- [x] All "Must Have" present
+- [x] All "Must NOT Have" absent
+- [x] All tests pass
+- [x] AGENTS.md generated

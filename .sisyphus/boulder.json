@@ -2,10 +2,26 @@
   "active_plan": "/Users/llq/Documents/origin/ai-desktop/.sisyphus/plans/ai-desktop-init.md",
   "started_at": "2026-04-18T05:00:08.751Z",
   "session_ids": [
-    "ses_2610a196bfferHntnYAVEMRQfF"
+    "ses_2610a196bfferHntnYAVEMRQfF",
+    "ses_260b4c415ffewK5fIBblHxVoBB",
+    "ses_260b4ad67ffegRORg6B65fl41a",
+    "ses_260b48fadffeMt6ddwYDrjP9Gk",
+    "ses_260b476e6ffeACIRFTo5N0rexp",
+    "ses_260ac4e10ffeuNcUfL2088tI7O",
+    "ses_260ac0db3ffeQzQqnDCEcOuRpX",
+    "ses_260abaa14ffemqtkM0yB16hJuJ",
+    "ses_260ab3fd5ffepx5vN7Pq6tll59"
   ],
   "session_origins": {
-    "ses_2610a196bfferHntnYAVEMRQfF": "direct"
+    "ses_2610a196bfferHntnYAVEMRQfF": "direct",
+    "ses_260b4c415ffewK5fIBblHxVoBB": "appended",
+    "ses_260b4ad67ffegRORg6B65fl41a": "appended",
+    "ses_260b48fadffeMt6ddwYDrjP9Gk": "appended",
+    "ses_260b476e6ffeACIRFTo5N0rexp": "appended",
+    "ses_260ac4e10ffeuNcUfL2088tI7O": "appended",
+    "ses_260ac0db3ffeQzQqnDCEcOuRpX": "appended",
+    "ses_260abaa14ffemqtkM0yB16hJuJ": "appended",
+    "ses_260ab3fd5ffepx5vN7Pq6tll59": "appended"
   },
   "plan_name": "ai-desktop-init",
   "agent": "atlas",
@@ -171,6 +187,15 @@
       "agent": "Sisyphus-Junior",
       "category": "writing",
       "updated_at": "2026-04-18T06:31:59.238Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "ses_260ab3fd5ffepx5vN7Pq6tll59",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-18T06:48:19.981Z"
     }
   }
 }
