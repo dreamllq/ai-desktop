@@ -162,6 +162,15 @@
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
       "updated_at": "2026-04-18T06:27:23.572Z"
+    },
+    "todo:19": {
+      "task_key": "todo:19",
+      "task_label": "19",
+      "task_title": "AGENTS.md 知识库生成",
+      "session_id": "ses_260b7f50affebMQU8YjhKjheK3",
+      "agent": "Sisyphus-Junior",
+      "category": "writing",
+      "updated_at": "2026-04-18T06:31:59.238Z"
     }
   }
 }

@@ -1814,7 +1814,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `e2e/ipc.spec.ts`, `e2e/windows.spec.ts`, 修复文件
   - Pre-commit: `npx vitest run && npx playwright test`
 
-- [ ] 19. AGENTS.md 知识库生成
+- [x] 19. AGENTS.md 知识库生成
 
   **What to do**:
   - 生成 `/init-deep` 层级的 AGENTS.md 知识库文件
