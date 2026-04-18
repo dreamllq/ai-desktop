@@ -116,3 +116,15 @@
 - Vue SFC `[&.router-link-active]` syntax works in Tailwind v4 for targeting dynamic classes on same element
 - Layout pattern: AppLayout owns flex container + imports AppSidebar, uses `<slot />` for content
 - AppLayout uses `w-screen h-screen` for full viewport, `overflow-hidden` on container, `overflow-auto` on content area
+
+## Task 11: System Tray & Enhanced Single Instance Lock
+
+- Tray icon uses `nativeImage.createFromPath()` with `.resize({ width: 16, height: 16 })` for proper tray sizing
+- Tray context menu uses `Menu.buildFromTemplate()` — each item needs `label` and optional `click` handler
+- `tray.on('click')` for left-click behavior (toggle window); context menu is right-click on Windows/Linux, default on macOS
+- Close-to-tray: on Windows (`process.platform === 'win32'`), intercept `close` event with `event.preventDefault()` + `mainWindow.hide()`
+- macOS doesn't need close-to-tray — hiding on close is native macOS behavior (window-all-closed doesn't quit on darwin)
+- `createTray()` must be called AFTER `createWindow()` — tray menu references existing windows
+- Tray `Quit` calls `app.quit()` directly — bypasses the close-to-tray prevention since it's app-level quit
+- Enhanced `activate` handler: if windows exist, show the first one; otherwise create new window
+- `app.on('will-quit')` still fires when quitting via tray — DatabaseService cleanup is preserved

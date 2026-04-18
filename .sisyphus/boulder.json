@@ -99,6 +99,15 @@
       "agent": "Sisyphus-Junior",
       "category": "visual-engineering",
       "updated_at": "2026-04-18T06:01:02.926Z"
+    },
+    "todo:11": {
+      "task_key": "todo:11",
+      "task_label": "11",
+      "task_title": "系统托盘 + 单实例锁",
+      "session_id": "ses_260d1324fffelt34ZdfsOCpdTp",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-04-18T06:04:09.999Z"
     }
   }
 }

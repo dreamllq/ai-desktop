@@ -1,0 +1,30 @@
+Task 11: System Tray & Enhanced Single Instance Lock
+=====================================================
+
+## Files Modified
+- src/main/tray.ts — Full tray implementation
+- src/main/index.ts — Tray integration + close-to-tray behavior
+
+## tray.ts Implementation
+- Tray icon from resources/icon.png, resized to 16x16
+- Tooltip: "AI Desktop"
+- Context menu: Show Window, separator, Check for Updates (placeholder), separator, Quit
+- Click tray icon toggles main window visibility
+- Exports: createTray(), getTray()
+
+## index.ts Changes
+- Import createTray from ./tray
+- Capture mainWindow reference from createWindow()
+- Close-to-tray: on Windows, close event is prevented and window is hidden
+- macOS: default behavior (app stays in dock)
+- createTray() called after createWindow() in whenReady
+- Enhanced activate handler: shows existing window if available, creates new one if not
+- Existing single instance lock preserved
+- will-quit handler for DatabaseService.close() preserved
+
+## Build Result
+- typecheck: PASS (node + web)
+- electron-vite build: PASS (main 4.98kB, preload 0.87kB, renderer 256.81kB)
+- No LSP diagnostics
+
+Date: 2026-04-18

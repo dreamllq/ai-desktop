@@ -3,6 +3,7 @@ import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createWindow } from './windows'
 import { registerIpcHandlers } from './ipc'
 import { DatabaseService } from './database'
+import { createTray } from './tray'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -28,10 +29,23 @@ if (!gotTheLock) {
 
     DatabaseService.getInstance().initialize()
 
-    createWindow()
+    const mainWindow = createWindow()
+
+    mainWindow.on('close', (event) => {
+      if (process.platform === 'win32') {
+        event.preventDefault()
+        mainWindow.hide()
+      }
+    })
+
+    createTray()
 
     app.on('activate', function () {
-      if (BrowserWindow.getAllWindows().length === 0) createWindow()
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow()
+      } else {
+        BrowserWindow.getAllWindows()[0].show()
+      }
     })
   })
 

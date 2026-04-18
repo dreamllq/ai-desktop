@@ -1139,7 +1139,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `electron.vite.config.ts`, `src/renderer/src/assets/main.css`, `src/renderer/src/components/layout/AppLayout.vue`, `src/renderer/src/components/layout/AppSidebar.vue`, `src/renderer/src/App.vue`, `src/renderer/src/main.ts`
   - Pre-commit: `npm run build`
 
-- [ ] 11. 系统托盘 + 单实例锁
+- [x] 11. 系统托盘 + 单实例锁
 
   **What to do**:
   - 创建 `src/main/tray.ts` — 系统托盘模块：
