@@ -414,7 +414,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `package.json`, `package-lock.json`
   - Pre-commit: `npm install`
 
-- [ ] 3. ESLint + Prettier 配置
+- [x] 3. ESLint + Prettier 配置
 
   **What to do**:
   - 验证/修改脚手架生成的 `eslint.config.mjs`（ESLint flat config 格式）
@@ -1585,9 +1585,9 @@ Max Concurrent: 6 (Wave 2)
         include: ['src/**/*.test.ts'],
         coverage: {
           provider: 'v8',
-          reporter: ['text', 'json', 'html']
-        }
-      }
+          reporter: ['text', 'json', 'html'],
+        },
+      },
     })
     ```
 
@@ -1669,8 +1669,8 @@ Max Concurrent: 6 (Wave 2)
       timeout: 30000,
       retries: 0,
       use: {
-        trace: 'on-first-retry'
-      }
+        trace: 'on-first-retry',
+      },
     })
     ```
 

@@ -25,3 +25,12 @@
 - npm adds `^` by default; must post-process package.json to strip prefixes
 - lodash.isequal@4.5.0 is deprecated (comes as transitive dep of electron-updater) - non-blocking
 - Installed versions: vue-router 4.6.4, pinia 2.3.1, better-sqlite3 12.9.0, electron-updater 6.8.3, tailwindcss 4.2.2, vitest 4.1.4, @playwright/test 1.59.1
+
+## Task 3: ESLint & Prettier Configuration
+- Scaffold-generated eslint.config.mjs already includes Vue flat/recommended, TypeScript, vue-eslint-parser, and prettier config — well structured
+- Scaffold .prettierrc.yaml had `trailingComma: none` — plan required `all`, also missing `tabWidth: 2`
+- Scaffold .prettierignore had `out`, `dist` but missing `node_modules`
+- Changing trailingComma from `none` to `all` triggered 16 prettier/prettier warnings — all auto-fixable
+- `npx prettier --write` and `npx eslint --fix` both work for auto-fixing
+- eslint.config.mjs and electron.vite.config.ts also got formatted by prettier (not just src/)
+- ESLint flat config with `defineConfig` from `eslint/config` is the modern pattern

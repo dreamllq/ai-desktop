@@ -27,6 +27,15 @@
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "updated_at": "2026-04-18T05:28:19.531Z"
+    },
+    "todo:3": {
+      "task_key": "todo:3",
+      "task_label": "3",
+      "task_title": "ESLint + Prettier 配置",
+      "session_id": "ses_260ef521effed7VRPHzYGUilbQ",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-18T05:31:25.344Z"
     }
   }
 }
