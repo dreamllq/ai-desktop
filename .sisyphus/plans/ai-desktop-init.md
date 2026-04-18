@@ -1656,7 +1656,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `vitest.config.ts`, `src/**/*.test.ts`, `package.json`
   - Pre-commit: `npx vitest run`
 
-- [ ] 17. Playwright E2E 测试基础设施
+- [x] 17. Playwright E2E 测试基础设施
 
   **What to do**:
   - 创建 `playwright.config.ts`：

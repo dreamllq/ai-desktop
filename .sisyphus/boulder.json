@@ -153,6 +153,15 @@
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
       "updated_at": "2026-04-18T06:23:48.599Z"
+    },
+    "todo:17": {
+      "task_key": "todo:17",
+      "task_label": "17",
+      "task_title": "Playwright E2E 测试基础设施",
+      "session_id": "ses_260bcba56ffeEJcUSZ82gxq5P9",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-04-18T06:27:23.572Z"
     }
   }
 }

@@ -1,0 +1,30 @@
+
+Running 2 tests using 1 worker
+
+  ✘  1 e2e/app.spec.ts:15:5 › app launches and shows window (0ms)
+  -  2 e2e/app.spec.ts:22:5 › window contains expected content
+
+
+  1) e2e/app.spec.ts:15:5 › app launches and shows window ──────────────────────────────────────────
+
+    Error: electron.launch: Electron failed to install correctly, please delete node_modules/electron and try installing again
+
+       at helpers.ts:5
+
+      3 |
+      4 | export async function launchApp(): Promise<ElectronApplication> {
+    > 5 |   const app = await electron.launch({
+        |               ^
+      6 |     args: ['./out/main/index.js'],
+      7 |   })
+      8 |   return app
+        at launchApp (/Users/llq/Documents/origin/ai-desktop/e2e/helpers.ts:5:15)
+        at /Users/llq/Documents/origin/ai-desktop/e2e/app.spec.ts:8:9
+
+    Error Context: test-results/app-app-launches-and-shows-window/error-context.md
+
+    Error Context: test-results/app-app-launches-and-shows-window/error-context.md
+
+  1 failed
+    e2e/app.spec.ts:15:5 › app launches and shows window ───────────────────────────────────────────
+  1 did not run

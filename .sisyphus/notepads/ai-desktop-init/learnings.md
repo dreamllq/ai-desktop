@@ -169,3 +169,17 @@
 - Pinia store testing: `setActivePinia(createPinia())` in `beforeEach` isolates state between tests
 - Vue composables testing in happy-dom: mock `window.api` via `(window as unknown as Record<string, unknown>).api = mockApi`
 - vitest.config.ts needs `@vitejs/plugin-vue` and `resolve.alias` matching the project's path aliases (@renderer, @shared)
+
+## Task 17: Playwright E2E Testing Infrastructure
+
+- `@playwright/test` 1.59.1 was already installed as devDependency
+- Playwright Electron testing uses `_electron` from `playwright` (not `@playwright/test`) for `electron.launch()`
+- Import pattern: `import { _electron as electron } from 'playwright'` in helpers, types from `playwright` package
+- Electron launch args point to built output: `['./out/main/index.js']` — NOT source files
+- `test.beforeAll` / `test.afterAll` pattern: launch app once, close after all tests
+- Must guard `app.close()` with `if (app)` check — if launch fails, afterAll still runs and crashes on undefined
+- Electron binary install issues (`node_modules/electron` not properly set up) cause `electron.launch` to fail — this is environment-specific, not a code problem
+- `playwright.config.ts` with `testDir: './e2e'` keeps E2E tests separate from unit tests
+- LSP diagnostics clean on all three new files — no type errors
+- Existing build output at `out/main/index.js` can be used for E2E tests without full rebuild
+- Pre-existing typecheck errors in `src/main/database/__tests__/database.test.ts` block `npm run build` but don't affect E2E test setup
