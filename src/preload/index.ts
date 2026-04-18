@@ -8,6 +8,8 @@ const api: CustomAPI = {
   getAppInfo: () => ipcRenderer.invoke(IPC_CHANNELS.GET_APP_INFO),
   getSetting: (key) => ipcRenderer.invoke(IPC_CHANNELS.GET_SETTING, key),
   setSetting: (key, value) => ipcRenderer.invoke(IPC_CHANNELS.SET_SETTING, key, value),
+  openSettings: () => ipcRenderer.invoke(IPC_CHANNELS.OPEN_SETTINGS),
+  openAbout: () => ipcRenderer.invoke(IPC_CHANNELS.OPEN_ABOUT),
 }
 
 if (process.contextIsolated) {

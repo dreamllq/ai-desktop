@@ -19,5 +19,13 @@ export function useElectron(): CustomAPI {
     return api.setSetting(key, value)
   }
 
-  return { ping, getAppInfo, getSetting, setSetting }
+  function openSettings(): Promise<void> {
+    return api.openSettings()
+  }
+
+  function openAbout(): Promise<void> {
+    return api.openAbout()
+  }
+
+  return { ping, getAppInfo, getSetting, setSetting, openSettings, openAbout }
 }

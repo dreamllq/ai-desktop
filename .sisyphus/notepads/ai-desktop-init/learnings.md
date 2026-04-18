@@ -128,3 +128,16 @@
 - Tray `Quit` calls `app.quit()` directly — bypasses the close-to-tray prevention since it's app-level quit
 - Enhanced `activate` handler: if windows exist, show the first one; otherwise create new window
 - `app.on('will-quit')` still fires when quitting via tray — DatabaseService cleanup is preserved
+
+## Task 12: Multi-Window Management
+
+- Window tracking via `Map<string, BrowserWindow>` — key is window name ('main', 'settings', 'about')
+- Duplicate prevention: check map for existing window, verify `!isDestroyed()`, then `focus()` instead of creating new
+- Map cleanup: on `closed` event, delete the key from the map
+- Settings window: 600x500, independent (no parent), loads same renderer URL with hash `/settings`
+- About window: 400x300, modal (`modal: true, parent`), `resizable: false, minimizable: false, maximizable: false`
+- `loadRendererWindow` helper handles both dev (URL with hash) and production (loadFile) modes
+- Backward compat: `export const createWindow = createMainWindow` for alias
+- When adding new methods to `CustomAPI`, must also update `useElectron.ts` composable — it explicitly wraps each method
+- IPC handler for `open-about` finds mainWindow via `BrowserWindow.getAllWindows()[0]` to pass as parent
+- AppSidebar: Settings changed from `router-link` to button that calls `window.api.openSettings()` — opens separate window

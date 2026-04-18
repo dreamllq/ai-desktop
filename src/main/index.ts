@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { createWindow } from './windows'
+import { createMainWindow } from './windows'
 import { registerIpcHandlers } from './ipc'
 import { DatabaseService } from './database'
 import { createTray } from './tray'
@@ -29,7 +29,7 @@ if (!gotTheLock) {
 
     DatabaseService.getInstance().initialize()
 
-    const mainWindow = createWindow()
+    const mainWindow = createMainWindow()
 
     mainWindow.on('close', (event) => {
       if (process.platform === 'win32') {
@@ -42,7 +42,7 @@ if (!gotTheLock) {
 
     app.on('activate', function () {
       if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow()
+        createMainWindow()
       } else {
         BrowserWindow.getAllWindows()[0].show()
       }

@@ -1,7 +1,8 @@
-import { ipcMain, app } from 'electron'
+import { ipcMain, app, BrowserWindow } from 'electron'
 import { IPC_CHANNELS } from '@shared/types'
 import type { AppInfo } from '@shared/types'
 import { DatabaseService } from '../database'
+import { createSettingsWindow, createAboutWindow } from '../windows'
 
 export function registerIpcHandlers(): void {
   ipcMain.handle(IPC_CHANNELS.PING, () => 'pong')
@@ -23,5 +24,16 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.SET_SETTING, (_event, key: string, value: string): void => {
     DatabaseService.getInstance().setSetting(key, value)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.OPEN_SETTINGS, () => {
+    createSettingsWindow()
+  })
+
+  ipcMain.handle(IPC_CHANNELS.OPEN_ABOUT, () => {
+    const mainWindow = BrowserWindow.getAllWindows()[0]
+    if (mainWindow) {
+      createAboutWindow(mainWindow)
+    }
   })
 }

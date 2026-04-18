@@ -1236,7 +1236,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/main/tray.ts`, `src/main/index.ts`
   - Pre-commit: `npm run build`
 
-- [ ] 12. 多窗口管理
+- [x] 12. 多窗口管理
 
   **What to do**:
   - 创建 `src/main/windows/index.ts` — 窗口管理模块：

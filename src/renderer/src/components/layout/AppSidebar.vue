@@ -1,8 +1,9 @@
 <script setup lang="ts">
-const navItems = [
-  { path: '/', label: 'Home' },
-  { path: '/settings', label: 'Settings' },
-]
+const navItems = [{ path: '/', label: 'Home' }]
+
+function openSettings(): void {
+  window.api.openSettings()
+}
 </script>
 
 <template>
@@ -22,5 +23,13 @@ const navItems = [
         </li>
       </ul>
     </nav>
+    <div class="px-3 pb-4">
+      <button
+        class="w-full text-left px-3 py-2 rounded-md text-sm transition-colors hover:bg-slate-800 hover:text-white"
+        @click="openSettings"
+      >
+        Settings
+      </button>
+    </div>
   </aside>
 </template>
