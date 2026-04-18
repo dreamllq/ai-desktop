@@ -33,7 +33,11 @@ export function useElectron(): CustomAPI {
     return api.openAbout()
   }
 
-  function listProviders() {
+  function listProviders(): Promise<{
+    success: boolean
+    data?: LlmProviderListItem[]
+    error?: string
+  }> {
     return api.listProviders() as Promise<{
       success: boolean
       data?: LlmProviderListItem[]
@@ -41,7 +45,11 @@ export function useElectron(): CustomAPI {
     }>
   }
 
-  function getProvider(id: string) {
+  function getProvider(id: string): Promise<{
+    success: boolean
+    data?: LlmProviderListItem
+    error?: string
+  }> {
     return api.getProvider(id) as Promise<{
       success: boolean
       data?: LlmProviderListItem
@@ -49,7 +57,11 @@ export function useElectron(): CustomAPI {
     }>
   }
 
-  function createProvider(data: LlmProviderCreate) {
+  function createProvider(data: LlmProviderCreate): Promise<{
+    success: boolean
+    data?: string
+    error?: string
+  }> {
     return api.createProvider(data) as Promise<{
       success: boolean
       data?: string
@@ -57,7 +69,14 @@ export function useElectron(): CustomAPI {
     }>
   }
 
-  function updateProvider(id: string, updates: LlmProviderUpdate) {
+  function updateProvider(
+    id: string,
+    updates: LlmProviderUpdate,
+  ): Promise<{
+    success: boolean
+    data?: boolean
+    error?: string
+  }> {
     return api.updateProvider(id, updates) as Promise<{
       success: boolean
       data?: boolean
@@ -65,7 +84,11 @@ export function useElectron(): CustomAPI {
     }>
   }
 
-  function deleteProvider(id: string) {
+  function deleteProvider(id: string): Promise<{
+    success: boolean
+    data?: boolean
+    error?: string
+  }> {
     return api.deleteProvider(id) as Promise<{
       success: boolean
       data?: boolean

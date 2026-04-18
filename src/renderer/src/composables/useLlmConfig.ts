@@ -5,7 +5,13 @@ import type {
   LlmProviderUpdate,
 } from '@shared/types'
 
-export function useLlmConfig() {
+export function useLlmConfig(): {
+  listProviders: () => Promise<IpcResult<LlmProviderListItem[]>>
+  getProvider: (id: string) => Promise<IpcResult<LlmProviderListItem>>
+  createProvider: (data: LlmProviderCreate) => Promise<IpcResult<string>>
+  updateProvider: (id: string, updates: LlmProviderUpdate) => Promise<IpcResult<boolean>>
+  deleteProvider: (id: string) => Promise<IpcResult<boolean>>
+} {
   async function listProviders(): Promise<IpcResult<LlmProviderListItem[]>> {
     return window.api.listProviders()
   }
