@@ -117,6 +117,15 @@
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
       "updated_at": "2026-04-18T06:09:23.599Z"
+    },
+    "todo:13": {
+      "task_key": "todo:13",
+      "task_label": "13",
+      "task_title": "全局快捷键",
+      "session_id": "ses_260ca2243ffem5iXR3Tqe3zgqo",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-04-18T06:12:10.803Z"
     }
   }
 }

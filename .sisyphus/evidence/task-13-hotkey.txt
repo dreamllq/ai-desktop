@@ -1,0 +1,11 @@
+Task 13: Register global shortcut CmdOrCtrl+Shift+A to show/hide main window
+
+Files changed:
+- src/main/hotkey.ts: Replaced placeholder with full implementation using electron globalShortcut API
+- src/main/index.ts: Added import of registerHotkeys/unregisterAllHotkeys, called registerHotkeys() after createTray(), added unregisterAllHotkeys() in will-quit handler before DB close
+
+Verification:
+- LSP diagnostics: 0 errors on both files
+- npm run build: PASS (typecheck + build all succeeded)
+
+Shortcut behavior: CmdOrCtrl+Shift+A toggles main window visibility (hide if visible, show+focus if hidden)

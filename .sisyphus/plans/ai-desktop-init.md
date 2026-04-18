@@ -1320,7 +1320,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/main/windows/index.ts`, `src/main/ipc/index.ts`, `src/renderer/src/components/layout/AppSidebar.vue`
   - Pre-commit: `npm run build`
 
-- [ ] 13. 全局快捷键
+- [x] 13. 全局快捷键
 
   **What to do**:
   - 创建 `src/main/hotkey.ts` — 全局快捷键模块：

@@ -4,6 +4,7 @@ import { createMainWindow } from './windows'
 import { registerIpcHandlers } from './ipc'
 import { DatabaseService } from './database'
 import { createTray } from './tray'
+import { registerHotkeys, unregisterAllHotkeys } from './hotkey'
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -39,6 +40,7 @@ if (!gotTheLock) {
     })
 
     createTray()
+    registerHotkeys()
 
     app.on('activate', function () {
       if (BrowserWindow.getAllWindows().length === 0) {
@@ -56,6 +58,7 @@ if (!gotTheLock) {
   })
 
   app.on('will-quit', () => {
+    unregisterAllHotkeys()
     DatabaseService.getInstance().close()
   })
 }
