@@ -1,12 +1,15 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { IPC_CHANNELS } from '@shared/types'
+import type { CustomAPI } from '@shared/types'
 
-// Custom APIs for renderer
-const api = {}
+const api: CustomAPI = {
+  ping: () => ipcRenderer.invoke(IPC_CHANNELS.PING),
+  getAppInfo: () => ipcRenderer.invoke(IPC_CHANNELS.GET_APP_INFO),
+  getSetting: (key) => ipcRenderer.invoke(IPC_CHANNELS.GET_SETTING, key),
+  setSetting: (key, value) => ipcRenderer.invoke(IPC_CHANNELS.SET_SETTING, key, value),
+}
 
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)

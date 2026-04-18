@@ -64,3 +64,17 @@
 - `useElectron` composable wraps `window.electron.ipcRenderer` with typed interface
 - Scaffold files preserved: Versions.vue, electron.svg, wavy-lines.svg, base.css, main.css
 - Build passes with zero errors after full restructure
+
+## Task 6: Typed IPC Communication Layer
+
+- Shared types in `src/shared/types/index.ts` — single source of truth for IPC channels, request/response types
+- `IPC_CHANNELS` const + `IpcChannel` type derived via `typeof + keyof` pattern — prevents typos in channel names
+- `@shared` path alias needed in THREE places: `tsconfig.node.json`, `tsconfig.web.json`, and `electron.vite.config.ts`
+- `electron.vite.config.ts` needs `resolve.alias` for ALL THREE config sections (main, preload, renderer) — not just renderer
+- `ipcMain.handle` is the correct pattern for request-response IPC; `ipcMain.on` is fire-and-forget (was the old scaffold pattern)
+- `ipcMain.handle` handler for void return still needs explicit `(): void => {}` for type safety
+- `contextBridge.exposeInMainWorld` can expose any serializable object — typed `CustomAPI` works directly
+- Preload uses `ipcRenderer.invoke()` (Promise-based) to call `ipcMain.handle` handlers — natural match
+- `window.api` in `index.d.ts` now typed as `CustomAPI` instead of `unknown` — end-to-end type safety
+- `useElectron` composable now returns `CustomAPI` directly — no more untyped `send/invoke/on` wrappers
+- Settings handlers are placeholders (return null / no-op) — will be connected to DB in Task 7

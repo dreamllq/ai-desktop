@@ -1,24 +1,23 @@
-export function useElectron(): {
-  send: (channel: string, ...args: unknown[]) => void
-  invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
-  on: (channel: string, callback: (...args: unknown[]) => void) => () => void
-} {
-  const api = window.electron
+import type { AppInfo, CustomAPI } from '@shared/types'
 
-  function send(channel: string, ...args: unknown[]): void {
-    api.ipcRenderer.send(channel, ...args)
+export function useElectron(): CustomAPI {
+  const api = window.api
+
+  function ping(): Promise<string> {
+    return api.ping()
   }
 
-  function invoke(channel: string, ...args: unknown[]): Promise<unknown> {
-    return api.ipcRenderer.invoke(channel, ...args)
+  function getAppInfo(): Promise<AppInfo> {
+    return api.getAppInfo()
   }
 
-  function on(channel: string, callback: (...args: unknown[]) => void): () => void {
-    const unsubscribe = api.ipcRenderer.on(channel, callback)
-    return () => {
-      unsubscribe()
-    }
+  function getSetting(key: string): Promise<string | null> {
+    return api.getSetting(key)
   }
 
-  return { send, invoke, on }
+  function setSetting(key: string, value: string): Promise<void> {
+    return api.setSetting(key, value)
+  }
+
+  return { ping, getAppInfo, getSetting, setSetting }
 }

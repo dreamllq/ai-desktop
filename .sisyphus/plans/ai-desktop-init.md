@@ -693,7 +693,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: 所有新目录和文件
   - Pre-commit: `npm run build`
 
-- [ ] 6. IPC 通信层 + 类型定义
+- [x] 6. IPC 通信层 + 类型定义
 
   **What to do**:
   - 创建 `src/shared/types/index.ts` — 共享类型定义文件（main 和 renderer 都可访问）

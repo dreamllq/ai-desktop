@@ -54,6 +54,15 @@
       "agent": "Sisyphus-Junior",
       "category": "deep",
       "updated_at": "2026-04-18T05:39:39.463Z"
+    },
+    "todo:6": {
+      "task_key": "todo:6",
+      "task_label": "6",
+      "task_title": "IPC 通信层 + 类型定义",
+      "session_id": "ses_260e46da8ffeoMgcBHs1mef9ta",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-18T05:47:12.052Z"
     }
   }
 }
