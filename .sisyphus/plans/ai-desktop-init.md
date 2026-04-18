@@ -1378,7 +1378,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `src/main/hotkey.ts`, `src/main/index.ts`
   - Pre-commit: `npm run build`
 
-- [ ] 14. 自动更新 + electron-builder 打包
+- [x] 14. 自动更新 + electron-builder 打包
 
   **What to do**:
   - 创建 `src/main/updater.ts` — 自动更新模块：

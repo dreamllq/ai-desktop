@@ -1,5 +1,6 @@
 import { Tray, Menu, BrowserWindow, app, nativeImage } from 'electron'
 import { join } from 'path'
+import { checkForUpdates } from './updater'
 
 let tray: Tray | null = null
 
@@ -21,7 +22,7 @@ export function createTray(): Tray {
     {
       label: 'Check for Updates',
       click: () => {
-        /* placeholder */
+        checkForUpdates()
       },
     },
     { type: 'separator' },

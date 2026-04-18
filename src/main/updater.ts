@@ -1,3 +1,6 @@
+import { autoUpdater } from 'electron-updater'
+
 export function checkForUpdates(): void {
-  // stub
+  autoUpdater.autoDownload = false
+  autoUpdater.checkForUpdatesAndNotify()
 }

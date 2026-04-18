@@ -2,6 +2,7 @@ appId: com.ai-desktop.app
 productName: AI Desktop
 directories:
   buildResources: build
+  output: dist
 files:
   - '!**/.vscode/*'
   - '!src/*'
@@ -11,6 +12,8 @@ files:
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
 asarUnpack:
   - resources/**
+  - '**/*.node'
+  - node_modules/better-sqlite3/**
 win:
   executableName: ai-desktop
 nsis:
@@ -19,6 +22,8 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
+  category: public.app-category.productivity
+  target: dmg
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.

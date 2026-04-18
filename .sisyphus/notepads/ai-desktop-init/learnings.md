@@ -141,3 +141,13 @@
 - When adding new methods to `CustomAPI`, must also update `useElectron.ts` composable — it explicitly wraps each method
 - IPC handler for `open-about` finds mainWindow via `BrowserWindow.getAllWindows()[0]` to pass as parent
 - AppSidebar: Settings changed from `router-link` to button that calls `window.api.openSettings()` — opens separate window
+
+## Auto-Update Implementation (electron-updater)
+
+- `electron-updater` 6.8.3 already installed, provides `autoUpdater` with `checkForUpdatesAndNotify()`
+- `autoDownload = false` prevents auto-downloading — user must consent
+- `asarUnpack` must include both `**/*.node` (all native addons) and `node_modules/better-sqlite3/**` explicitly
+- electron-builder.yml already had `publish` section with generic provider — kept it
+- Added `output: dist` to directories for explicit build output path
+- mac section needed `category: public.app-category.productivity` and `target: dmg` for auto-update DMG support
+- `npm run build` runs typecheck (tsc + vue-tsc) then electron-vite build — all must pass

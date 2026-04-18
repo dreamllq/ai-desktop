@@ -126,6 +126,15 @@
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "updated_at": "2026-04-18T06:12:10.803Z"
+    },
+    "todo:14": {
+      "task_key": "todo:14",
+      "task_label": "14",
+      "task_title": "自动更新 + electron-builder 打包",
+      "session_id": "ses_260c78ee3ffe64oIh95xFSg56R",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-04-18T06:14:45.478Z"
     }
   }
 }
