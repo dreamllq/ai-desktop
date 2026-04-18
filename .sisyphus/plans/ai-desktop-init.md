@@ -579,7 +579,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `tsconfig.json`, `tsconfig.node.json`, `tsconfig.web.json`, `src/preload/index.d.ts`
   - Pre-commit: `npx vue-tsc --noEmit`
 
-- [ ] 5. 目录结构重组 + 架构搭建
+- [x] 5. 目录结构重组 + 架构搭建
 
   **What to do**:
   - 在脚手架基础上创建完整的项目目录结构：

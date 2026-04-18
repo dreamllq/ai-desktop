@@ -20,6 +20,7 @@
 - Scaffold package name derives from directory name (e.g., `electron-scaffold` from `/tmp/electron-scaffold`)
 
 ## Task 2: Dependencies Installation
+
 - better-sqlite3 is a native module requiring `electron-builder install-app-deps` to rebuild for Electron
 - `npm install` with electron postinstall can timeout (>5min); use `--ignore-scripts` + manual `npx electron-builder install-app-deps` as fallback
 - npm adds `^` by default; must post-process package.json to strip prefixes
@@ -27,6 +28,7 @@
 - Installed versions: vue-router 4.6.4, pinia 2.3.1, better-sqlite3 12.9.0, electron-updater 6.8.3, tailwindcss 4.2.2, vitest 4.1.4, @playwright/test 1.59.1
 
 ## Task 3: ESLint & Prettier Configuration
+
 - Scaffold-generated eslint.config.mjs already includes Vue flat/recommended, TypeScript, vue-eslint-parser, and prettier config — well structured
 - Scaffold .prettierrc.yaml had `trailingComma: none` — plan required `all`, also missing `tabWidth: 2`
 - Scaffold .prettierignore had `out`, `dist` but missing `node_modules`
@@ -46,3 +48,19 @@
 - `src/preload/index.d.ts` declares `Window.electron: ElectronAPI` and `Window.api: unknown`
 - Typecheck runs in two passes: `tsc` for node config, `vue-tsc` for web config
 - Both pass with zero errors on scaffold-generated code
+
+## Task 5: Directory Structure Reorganization
+
+- Extracted `createWindow()` from `src/main/index.ts` → `src/main/windows/index.ts`; function returns `BrowserWindow` for testability
+- `?asset` import suffix for icon requires relative path from windows dir: `../../../resources/icon.png?asset`
+- `app.requestSingleInstanceLock()` must be called before any app events; if lock fails, `app.quit()` and early return
+- Single instance pattern: wrap all app lifecycle in `else` block after lock check
+- `second-instance` handler should restore+focus existing window
+- IPC handlers moved to `src/main/ipc/index.ts` — original scaffold had `ipcMain.on('ping')` inline in whenReady
+- All skeleton files use proper TypeScript types (no `any`) — DatabaseService is singleton pattern
+- `vue-router` with `createWebHashHistory()` is correct for Electron (file:// protocol compatible)
+- Pinia store with `defineStore('app', { state, actions })` pattern
+- Vue SFC skeleton files use `<template>` only — no `<script>` needed for pure presentational stubs
+- `useElectron` composable wraps `window.electron.ipcRenderer` with typed interface
+- Scaffold files preserved: Versions.vue, electron.svg, wavy-lines.svg, base.css, main.css
+- Build passes with zero errors after full restructure

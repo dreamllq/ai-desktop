@@ -45,6 +45,15 @@
       "agent": "Sisyphus-Junior",
       "category": "quick",
       "updated_at": "2026-04-18T05:34:03.916Z"
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "目录结构重组 + 架构搭建",
+      "session_id": "ses_260e9f4a7ffecrv6LsMSNhqdMK",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-18T05:39:39.463Z"
     }
   }
 }
