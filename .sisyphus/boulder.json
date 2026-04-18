@@ -1,0 +1,23 @@
+{
+  "active_plan": "/Users/llq/Documents/origin/ai-desktop/.sisyphus/plans/ai-desktop-init.md",
+  "started_at": "2026-04-18T05:00:08.751Z",
+  "session_ids": [
+    "ses_2610a196bfferHntnYAVEMRQfF"
+  ],
+  "session_origins": {
+    "ses_2610a196bfferHntnYAVEMRQfF": "direct"
+  },
+  "plan_name": "ai-desktop-init",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "electron-vite 脚手架初始化",
+      "session_id": "ses_26107eb24ffeyQQzEgA7aBP1OL",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-18T05:13:08.423Z"
+    }
+  }
+}
