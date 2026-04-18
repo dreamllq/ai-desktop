@@ -34,3 +34,15 @@
 - `npx prettier --write` and `npx eslint --fix` both work for auto-fixing
 - eslint.config.mjs and electron.vite.config.ts also got formatted by prettier (not just src/)
 - ESLint flat config with `defineConfig` from `eslint/config` is the modern pattern
+
+## Task 4: TypeScript Configuration Verification
+
+- Scaffold already generates correct 3-file tsconfig structure — verification-only task, no fixes needed
+- `tsconfig.json` is a solution-style config: `files: []` + `references` to node and web configs
+- `tsconfig.node.json` extends `@electron-toolkit/tsconfig/tsconfig.node.json` — provides ESNext module/bundler resolution
+- `tsconfig.web.json` extends `@electron-toolkit/tsconfig/tsconfig.web.json` — browser env, no node types
+- Path alias `@renderer/*` → `src/renderer/src/*` configured in tsconfig.web.json with `baseUrl: "."`
+- `types: ["electron-vite/node"]` in tsconfig.node.json is sufficient (provides Electron + Node type stubs)
+- `src/preload/index.d.ts` declares `Window.electron: ElectronAPI` and `Window.api: unknown`
+- Typecheck runs in two passes: `tsc` for node config, `vue-tsc` for web config
+- Both pass with zero errors on scaffold-generated code

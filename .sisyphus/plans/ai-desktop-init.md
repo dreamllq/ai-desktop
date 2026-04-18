@@ -500,7 +500,7 @@ Max Concurrent: 6 (Wave 2)
   - Files: `eslint.config.mjs`, `.prettierrc`, `.prettierignore`, `package.json`
   - Pre-commit: `npx eslint .`
 
-- [ ] 4. TypeScript 配置优化
+- [x] 4. TypeScript 配置优化
 
   **What to do**:
   - 验证三文件 TypeScript 配置结构：
