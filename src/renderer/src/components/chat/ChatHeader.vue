@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import { useChatStore } from '@renderer/stores/chat'
-import { usePickerData } from '@renderer/composables/usePickerData'
+import type { usePickerData } from '@renderer/composables/usePickerData'
 import ModelSelector from './ModelSelector.vue'
 import AgentSelector from './AgentSelector.vue'
 
 const store = useChatStore()
-const picker = usePickerData()
 
-onMounted(() => {
-  picker.loadAll()
-})
+const props = defineProps<{
+  picker: ReturnType<typeof usePickerData>
+}>()
 
 function handleModelSelect(modelId: string): void {
   store.selectModel(modelId)
@@ -26,7 +24,7 @@ function handleAgentSelect(agentId: string | null): void {
     <!-- Agent Selector -->
     <AgentSelector
       :model-value="store.selectedAgentId"
-      :agents="picker.availableAgents.value"
+      :agents="props.picker.availableAgents.value"
       @update:model-value="handleAgentSelect"
     />
 
@@ -36,7 +34,7 @@ function handleAgentSelect(agentId: string | null): void {
     <!-- Model Selector -->
     <ModelSelector
       :model-value="store.selectedModelId"
-      :models="picker.availableModels.value"
+      :models="props.picker.availableModels.value"
       @update:model-value="handleModelSelect"
     />
 

@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue'
 import { useChatStore } from '@renderer/stores/chat'
+import { usePickerData } from '@renderer/composables/usePickerData'
 import ChatLayout from '@renderer/components/chat/ChatLayout.vue'
 import ChatHeader from '@renderer/components/chat/ChatHeader.vue'
 import ChatMessageList from '@renderer/components/chat/ChatMessageList.vue'
 import ChatInput from '@renderer/components/chat/ChatInput.vue'
 
 const store = useChatStore()
+const picker = usePickerData()
 
 let cleanupStreaming: (() => void) | null = null
 
 onMounted(() => {
   store.initialize()
+  picker.loadAll()
   cleanupStreaming = store.setupStreamingListeners()
 })
 
@@ -27,7 +30,7 @@ function handleSend(content: string): void {
 <template>
   <ChatLayout>
     <template #header>
-      <ChatHeader v-if="store.currentConversationId" />
+      <ChatHeader v-if="store.currentConversationId" :picker="picker" />
     </template>
 
     <div v-if="store.currentConversationId" class="flex flex-col h-full">
