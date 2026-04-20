@@ -5,8 +5,11 @@ import ChatSidebar from './ChatSidebar.vue'
 <template>
   <div class="flex h-screen w-screen overflow-hidden">
     <ChatSidebar />
-    <main class="flex-1 overflow-hidden">
-      <slot />
-    </main>
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <slot name="header" />
+      <main class="flex-1 overflow-hidden">
+        <slot />
+      </main>
+    </div>
   </div>
 </template>
