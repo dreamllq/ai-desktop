@@ -24,7 +24,6 @@ vi.mock('../../database', () => ({
 }))
 
 vi.mock('../../windows', () => ({
-  createSettingsWindow: vi.fn(),
   createAboutWindow: vi.fn(),
 }))
 

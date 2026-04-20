@@ -13,7 +13,7 @@ import type {
   ExecutionRequest,
 } from '@shared/types'
 import { DatabaseService, type Repositories } from '../database'
-import { createSettingsWindow, createAboutWindow } from '../windows'
+import { createAboutWindow } from '../windows'
 import { createLLMProvider } from '../services/llm-service'
 import { AgentRegistry } from '../services/agent-registry'
 import { SkillManager } from '../services/skill-manager'
@@ -92,10 +92,6 @@ export async function registerIpcHandlers(): Promise<void> {
 
   ipcMain.handle(IPC_CHANNELS.SET_SETTING, (_event, key: string, value: string): void => {
     db().setSetting(key, value)
-  })
-
-  ipcMain.handle(IPC_CHANNELS.OPEN_SETTINGS, () => {
-    createSettingsWindow()
   })
 
   ipcMain.handle(IPC_CHANNELS.OPEN_ABOUT, () => {

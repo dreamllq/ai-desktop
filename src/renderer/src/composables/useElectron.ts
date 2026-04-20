@@ -40,10 +40,6 @@ export function useElectron(): CustomAPI {
     return api.setSetting(key, value)
   }
 
-  function openSettings(): Promise<void> {
-    return api.openSettings()
-  }
-
   function openAbout(): Promise<void> {
     return api.openAbout()
   }
@@ -322,7 +318,6 @@ export function useElectron(): CustomAPI {
     getAppInfo,
     getSetting,
     setSetting,
-    openSettings,
     openAbout,
     listProviders,
     getProvider,

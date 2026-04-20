@@ -7,7 +7,6 @@ describe('useElectron', () => {
     getAppInfo: vi.fn().mockResolvedValue({}),
     getSetting: vi.fn().mockResolvedValue(null),
     setSetting: vi.fn().mockResolvedValue(undefined),
-    openSettings: vi.fn().mockResolvedValue(undefined),
     openAbout: vi.fn().mockResolvedValue(undefined),
   }
 
@@ -17,7 +16,6 @@ describe('useElectron', () => {
     mockApi.getAppInfo.mockResolvedValue({})
     mockApi.getSetting.mockResolvedValue(null)
     mockApi.setSetting.mockResolvedValue(undefined)
-    mockApi.openSettings.mockResolvedValue(undefined)
     mockApi.openAbout.mockResolvedValue(undefined)
     ;(window as unknown as Record<string, unknown>).api = mockApi
   })

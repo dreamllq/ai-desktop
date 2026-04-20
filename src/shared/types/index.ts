@@ -18,7 +18,6 @@ export const IPC_CHANNELS = {
   GET_APP_INFO: 'get-app-info',
   GET_SETTING: 'get-setting',
   SET_SETTING: 'set-setting',
-  OPEN_SETTINGS: 'open-settings',
   OPEN_ABOUT: 'open-about',
   LLM_LIST_PROVIDERS: 'llm-list-providers',
   LLM_GET_PROVIDER: 'llm-get-provider',
@@ -262,7 +261,6 @@ export interface CustomAPI {
   getAppInfo: () => Promise<AppInfo>
   getSetting: (key: string) => Promise<string | null>
   setSetting: (key: string, value: string) => Promise<void>
-  openSettings: () => Promise<void>
   openAbout: () => Promise<void>
   listProviders: () => Promise<IpcResult<LlmProviderListItem[]>>
   getProvider: (id: string) => Promise<IpcResult<LlmProviderListItem>>

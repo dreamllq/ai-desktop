@@ -55,44 +55,6 @@ export function createMainWindow(): BrowserWindow {
   return mainWindow
 }
 
-export function createSettingsWindow(): BrowserWindow {
-  const existing = openWindows.get('settings')
-  if (existing && !existing.isDestroyed()) {
-    existing.focus()
-    return existing
-  }
-
-  const settingsWindow = new BrowserWindow({
-    width: 600,
-    height: 500,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
-    },
-  })
-
-  settingsWindow.on('ready-to-show', () => {
-    settingsWindow.show()
-  })
-
-  settingsWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-
-  loadRendererWindow(settingsWindow, '/settings')
-
-  openWindows.set('settings', settingsWindow)
-  settingsWindow.on('closed', () => {
-    openWindows.delete('settings')
-  })
-
-  return settingsWindow
-}
-
 export function createAboutWindow(parent: BrowserWindow): BrowserWindow {
   const existing = openWindows.get('about')
   if (existing && !existing.isDestroyed()) {
