@@ -1,9 +1,29 @@
 import { ipcMain, app, BrowserWindow } from 'electron'
-import { IPC_CHANNELS } from '@shared/types'
-import type { AppInfo, LlmProviderCreate, LlmProviderUpdate } from '@shared/types'
+import { randomUUID } from 'node:crypto'
+import { IPC_CHANNELS, IPC_STREAM_EVENTS } from '@shared/types'
+import type {
+  AppInfo,
+  IpcResult,
+  LlmProviderCreate,
+  LlmProviderUpdate,
+  Conversation,
+  ConversationConfig,
+  ModelInfo,
+  CreateConversationWithConfigParams,
+  ExecutionRequest,
+} from '@shared/types'
 import { DatabaseService } from '../database'
 import { createSettingsWindow, createAboutWindow } from '../windows'
-import { createLLMService } from '../services/llm-service'
+import { createLLMProvider } from '../services/llm-service'
+import { AgentRegistry } from '../services/agent-registry'
+import { SkillManager } from '../services/skill-manager'
+import { getMcpManager } from '../services/mcp-manager'
+import { getToolRegistry } from '../services/tool-registry'
+import { createExecutionEngine } from '../services/execution-engine'
+import { createStreamer } from './streaming'
+import { registerAgentHandlers } from './agent-handlers'
+import { registerSkillHandlers } from './skill-handlers'
+import { registerMcpHandlers } from './mcp-handlers'
 
 function db(): DatabaseService {
   return DatabaseService.getInstance()
@@ -14,6 +34,37 @@ function repos() {
 }
 
 export function registerIpcHandlers(): void {
+  const agentRegistry = new AgentRegistry(repos().agent)
+  const skillManager = new SkillManager(repos().skill)
+  const mcpManager = getMcpManager()
+
+  const toolRegistry = getToolRegistry()
+  toolRegistry.initialize(mcpManager)
+
+  const engine = createExecutionEngine({
+    getProvider: (providerId: string, decryptedApiKey: string) => {
+      const provider = db().getProviderById(providerId)
+      if (!provider) throw new Error(`Provider not found: ${providerId}`)
+      return createLLMProvider(provider, decryptedApiKey)
+    },
+    toolRegistry,
+    agentRegistry,
+    skillManager,
+    messageRepo: repos().message,
+  })
+
+  const agents = agentRegistry.listAgents()
+  const defaultAgentId =
+    agents.success && agents.data
+      ? agents.data.find((a) => a.name === '默认助手')?.id || agents.data[0]?.id || ''
+      : ''
+
+  const providers = db().listProviders()
+  const firstEnabled = providers.find((p) => p.enabled)
+  const defaultModelId = firstEnabled?.defaultModel || firstEnabled?.models?.[0] || ''
+
+  const activeExecutions = new Map<string, AbortController>()
+
   ipcMain.handle(IPC_CHANNELS.PING, () => 'pong')
 
   ipcMain.handle(IPC_CHANNELS.GET_APP_INFO, (): AppInfo => {
@@ -199,7 +250,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(
     IPC_CHANNELS.CHAT_SEND_MESSAGE,
-    async (_event, conversationId: string, content: string) => {
+    async (event, conversationId: string, content: string) => {
       try {
         if (!conversationId) {
           return { success: false as const, error: 'Conversation ID is required' }
@@ -210,28 +261,57 @@ export function registerIpcHandlers(): void {
 
         const { conversation: convRepo, message: msgRepo } = repos()
 
-        msgRepo.create(conversationId, 'user', content.trim())
+        const userMessage = msgRepo.create(conversationId, 'user', content.trim())
 
         const conversation = convRepo.get(conversationId)
         if (conversation && conversation.title === '新的对话') {
-          const title = content.trim().substring(0, 20)
-          convRepo.update(conversationId, title)
+          convRepo.update(conversationId, content.trim().substring(0, 20))
         }
 
-        const messages = msgRepo.list(conversationId)
+        const rawConfig = db().getSetting(`conversation-config:${conversationId}`)
+        const config: ConversationConfig = rawConfig
+          ? JSON.parse(rawConfig)
+          : { agentId: null, modelId: null, skillIds: [] }
 
-        const llmService = createLLMService()
-        const llmMessages = messages
-          .filter((m) => m.role !== 'tool')
-          .map((m) => ({ role: m.role as 'user' | 'assistant' | 'system', content: m.content }))
-        const response = await llmService.sendMessage(conversationId, llmMessages)
+        const agentId = config.agentId || defaultAgentId
+        const modelId = config.modelId || defaultModelId
+        const skillIds = config.skillIds || []
 
-        const assistantMessage = msgRepo.create(conversationId, 'assistant', response.content)
+        const messageId = randomUUID()
+        const streamer = createStreamer(event.sender, conversationId, messageId)
 
-        return { success: true as const, data: assistantMessage }
+        const request: ExecutionRequest = {
+          conversationId,
+          message: content.trim(),
+          agentId,
+          modelId,
+          skillIds,
+        }
+
+        const abortController = new AbortController()
+        activeExecutions.set(conversationId, abortController)
+
+        engine.execute(request, streamer, abortController.signal).finally(() => {
+          activeExecutions.delete(conversationId)
+        })
+
+        return { success: true as const, data: userMessage }
       } catch (error) {
         return { success: false as const, error: String(error) }
       }
+    },
+  )
+
+  ipcMain.handle(
+    IPC_STREAM_EVENTS.CHAT_STREAM_ABORT,
+    (_event, conversationId: string): IpcResult<true> => {
+      const controller = activeExecutions.get(conversationId)
+      if (controller) {
+        controller.abort()
+        activeExecutions.delete(conversationId)
+        return { success: true, data: true }
+      }
+      return { success: false, error: 'No active execution' }
     },
   )
 
@@ -252,4 +332,86 @@ export function registerIpcHandlers(): void {
       return { success: false as const, error: String(error) }
     }
   })
+
+  registerAgentHandlers(() => agentRegistry)
+  registerSkillHandlers(() => skillManager)
+  registerMcpHandlers(() => ({ repository: repos().mcpServer, manager: mcpManager }))
+
+  // Model handlers
+  ipcMain.handle(IPC_CHANNELS.MODEL_LIST_AVAILABLE, (): IpcResult<ModelInfo[]> => {
+    try {
+      const providers = db().listProviders()
+      const models: ModelInfo[] = []
+      for (const provider of providers) {
+        if (!provider.enabled) continue
+        for (const model of provider.models) {
+          models.push({
+            id: model,
+            name: model,
+            providerId: provider.id,
+            providerName: provider.name,
+          })
+        }
+      }
+      return { success: true, data: models }
+    } catch (error) {
+      return { success: false, error: String(error) }
+    }
+  })
+
+  // Chat extension handlers
+  ipcMain.handle(
+    IPC_CHANNELS.CHAT_CREATE_WITH_CONFIG,
+    (_event, params: CreateConversationWithConfigParams): IpcResult<Conversation> => {
+      try {
+        const conversation = repos().conversation.create(params.title)
+        if (params.agentId || params.modelId || params.skillIds) {
+          const config: ConversationConfig = {
+            agentId: params.agentId ?? null,
+            modelId: params.modelId ?? null,
+            skillIds: params.skillIds ?? [],
+          }
+          db().setSetting(`conversation-config:${conversation.id}`, JSON.stringify(config))
+        }
+        return { success: true, data: conversation }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.CHAT_SWITCH_MODEL,
+    (_event, conversationId: string, modelId: string): IpcResult<boolean> => {
+      try {
+        if (!conversationId) return { success: false, error: 'Conversation ID is required' }
+        if (!modelId) return { success: false, error: 'Model ID is required' }
+        const raw = db().getSetting(`conversation-config:${conversationId}`)
+        const config: ConversationConfig = raw
+          ? JSON.parse(raw)
+          : { agentId: null, modelId: null, skillIds: [] }
+        config.modelId = modelId
+        db().setSetting(`conversation-config:${conversationId}`, JSON.stringify(config))
+        return { success: true, data: true }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.CHAT_GET_CONFIG,
+    (_event, conversationId: string): IpcResult<ConversationConfig> => {
+      try {
+        if (!conversationId) return { success: false, error: 'Conversation ID is required' }
+        const raw = db().getSetting(`conversation-config:${conversationId}`)
+        const config: ConversationConfig = raw
+          ? JSON.parse(raw)
+          : { agentId: null, modelId: null, skillIds: [] }
+        return { success: true, data: config }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
 }
