@@ -1,5 +1,17 @@
 export * from './agent'
-import type { ToolCall } from './agent'
+import type {
+  ToolCall,
+  AgentConfig,
+  AgentType,
+  RemoteAgentConfig,
+  LocalAgentConfig,
+  AgentManifest,
+  SkillConfig,
+  McpServerConfig,
+  McpTransportType,
+  McpToolDefinition,
+  McpToolResult,
+} from './agent'
 
 export const IPC_CHANNELS = {
   PING: 'ping',
@@ -22,6 +34,37 @@ export const IPC_CHANNELS = {
   CHAT_SEND_MESSAGE: 'chat-send-message',
   CHAT_GET_ACTIVE_CONVERSATION: 'chat-get-active-conversation',
   CHAT_SET_ACTIVE_CONVERSATION: 'chat-set-active-conversation',
+
+  // Agent channels
+  AGENT_LIST: 'agent-list',
+  AGENT_GET: 'agent-get',
+  AGENT_REGISTER: 'agent-register',
+  AGENT_UPDATE: 'agent-update',
+  AGENT_DELETE: 'agent-delete',
+
+  // Skill channels
+  SKILL_LIST: 'skill-list',
+  SKILL_GET: 'skill-get',
+  SKILL_RELOAD: 'skill-reload',
+  SKILL_DELETE: 'skill-delete',
+
+  // MCP channels
+  MCP_LIST_SERVERS: 'mcp-list-servers',
+  MCP_GET_SERVER: 'mcp-get-server',
+  MCP_ADD_SERVER: 'mcp-add-server',
+  MCP_UPDATE_SERVER: 'mcp-update-server',
+  MCP_DELETE_SERVER: 'mcp-delete-server',
+  MCP_LIST_TOOLS: 'mcp-list-tools',
+  MCP_EXECUTE_TOOL: 'mcp-execute-tool',
+  MCP_GET_SERVER_STATUS: 'mcp-get-server-status',
+
+  // Model channels
+  MODEL_LIST_AVAILABLE: 'model-list-available',
+
+  // Chat extensions
+  CHAT_CREATE_WITH_CONFIG: 'chat-create-with-config',
+  CHAT_SWITCH_MODEL: 'chat-switch-model',
+  CHAT_GET_CONFIG: 'chat-get-config',
 } as const
 
 export const IPC_STREAM_EVENTS = {
@@ -161,6 +204,58 @@ export interface SendMessageParams {
   content: string
 }
 
+export interface AgentRegisterParams {
+  name: string
+  description: string
+  type: AgentType
+  config: RemoteAgentConfig | LocalAgentConfig
+  manifest: AgentManifest
+  enabled?: boolean
+}
+
+export interface AgentUpdateParams {
+  name?: string
+  description?: string
+  type?: AgentType
+  config?: RemoteAgentConfig | LocalAgentConfig
+  manifest?: AgentManifest
+  enabled?: boolean
+}
+
+export interface McpServerAddParams {
+  name: string
+  transportType: McpTransportType
+  config: { command: string; args: string[] } | { url: string }
+  enabled?: boolean
+}
+
+export interface McpServerUpdateParams {
+  name?: string
+  transportType?: McpTransportType
+  config?: { command: string; args: string[] } | { url: string }
+  enabled?: boolean
+}
+
+export interface CreateConversationWithConfigParams {
+  title?: string
+  agentId?: string
+  modelId?: string
+  skillIds?: string[]
+}
+
+export interface ConversationConfig {
+  agentId: string | null
+  modelId: string | null
+  skillIds: string[]
+}
+
+export interface ModelInfo {
+  id: string
+  name: string
+  providerId: string
+  providerName: string
+}
+
 // Custom API exposed via contextBridge — this is the contract between preload and renderer
 export interface CustomAPI {
   ping: () => Promise<string>
@@ -183,4 +278,43 @@ export interface CustomAPI {
   sendMessage: (conversationId: string, content: string) => Promise<IpcResult<Message>>
   getActiveConversation: () => Promise<IpcResult<string | null>>
   setActiveConversation: (id: string | null) => Promise<IpcResult<void>>
+
+  // Agent
+  listAgents: () => Promise<IpcResult<AgentConfig[]>>
+  getAgent: (id: string) => Promise<IpcResult<AgentConfig | null>>
+  registerAgent: (params: AgentRegisterParams) => Promise<IpcResult<string>>
+  updateAgent: (id: string, params: AgentUpdateParams) => Promise<IpcResult<boolean>>
+  deleteAgent: (id: string) => Promise<IpcResult<boolean>>
+
+  // Skill
+  listSkills: () => Promise<IpcResult<SkillConfig[]>>
+  getSkill: (id: string) => Promise<IpcResult<SkillConfig | null>>
+  reloadSkills: () => Promise<IpcResult<boolean>>
+  deleteSkill: (id: string) => Promise<IpcResult<boolean>>
+
+  // MCP
+  listMcpServers: () => Promise<IpcResult<McpServerConfig[]>>
+  getMcpServer: (id: string) => Promise<IpcResult<McpServerConfig | null>>
+  addMcpServer: (params: McpServerAddParams) => Promise<IpcResult<string>>
+  updateMcpServer: (id: string, params: McpServerUpdateParams) => Promise<IpcResult<boolean>>
+  deleteMcpServer: (id: string) => Promise<IpcResult<boolean>>
+  listMcpTools: (serverId: string) => Promise<IpcResult<McpToolDefinition[]>>
+  executeMcpTool: (
+    serverId: string,
+    toolName: string,
+    args: Record<string, unknown>,
+  ) => Promise<IpcResult<McpToolResult>>
+  getMcpServerStatus: (
+    serverId: string,
+  ) => Promise<IpcResult<{ connected: boolean; error?: string }>>
+
+  // Model
+  listAvailableModels: () => Promise<IpcResult<ModelInfo[]>>
+
+  // Chat extensions
+  createConversationWithConfig: (
+    params: CreateConversationWithConfigParams,
+  ) => Promise<IpcResult<Conversation>>
+  switchModel: (conversationId: string, modelId: string) => Promise<IpcResult<boolean>>
+  getConversationConfig: (conversationId: string) => Promise<IpcResult<ConversationConfig>>
 }

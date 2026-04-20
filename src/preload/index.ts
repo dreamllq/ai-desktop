@@ -35,6 +35,37 @@ const api: CustomAPI = {
     ipcRenderer.invoke(IPC_CHANNELS.CHAT_SEND_MESSAGE, conversationId, content),
   getActiveConversation: () => ipcRenderer.invoke(IPC_CHANNELS.CHAT_GET_ACTIVE_CONVERSATION),
   setActiveConversation: (id) => ipcRenderer.invoke(IPC_CHANNELS.CHAT_SET_ACTIVE_CONVERSATION, id),
+
+  listAgents: () => ipcRenderer.invoke(IPC_CHANNELS.AGENT_LIST),
+  getAgent: (id) => ipcRenderer.invoke(IPC_CHANNELS.AGENT_GET, id),
+  registerAgent: (params) => ipcRenderer.invoke(IPC_CHANNELS.AGENT_REGISTER, params),
+  updateAgent: (id, params) => ipcRenderer.invoke(IPC_CHANNELS.AGENT_UPDATE, id, params),
+  deleteAgent: (id) => ipcRenderer.invoke(IPC_CHANNELS.AGENT_DELETE, id),
+
+  listSkills: () => ipcRenderer.invoke(IPC_CHANNELS.SKILL_LIST),
+  getSkill: (id) => ipcRenderer.invoke(IPC_CHANNELS.SKILL_GET, id),
+  reloadSkills: () => ipcRenderer.invoke(IPC_CHANNELS.SKILL_RELOAD),
+  deleteSkill: (id) => ipcRenderer.invoke(IPC_CHANNELS.SKILL_DELETE, id),
+
+  listMcpServers: () => ipcRenderer.invoke(IPC_CHANNELS.MCP_LIST_SERVERS),
+  getMcpServer: (id) => ipcRenderer.invoke(IPC_CHANNELS.MCP_GET_SERVER, id),
+  addMcpServer: (params) => ipcRenderer.invoke(IPC_CHANNELS.MCP_ADD_SERVER, params),
+  updateMcpServer: (id, params) => ipcRenderer.invoke(IPC_CHANNELS.MCP_UPDATE_SERVER, id, params),
+  deleteMcpServer: (id) => ipcRenderer.invoke(IPC_CHANNELS.MCP_DELETE_SERVER, id),
+  listMcpTools: (serverId) => ipcRenderer.invoke(IPC_CHANNELS.MCP_LIST_TOOLS, serverId),
+  executeMcpTool: (serverId, toolName, args) =>
+    ipcRenderer.invoke(IPC_CHANNELS.MCP_EXECUTE_TOOL, serverId, toolName, args),
+  getMcpServerStatus: (serverId) =>
+    ipcRenderer.invoke(IPC_CHANNELS.MCP_GET_SERVER_STATUS, serverId),
+
+  listAvailableModels: () => ipcRenderer.invoke(IPC_CHANNELS.MODEL_LIST_AVAILABLE),
+
+  createConversationWithConfig: (params) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHAT_CREATE_WITH_CONFIG, params),
+  switchModel: (conversationId, modelId) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHAT_SWITCH_MODEL, conversationId, modelId),
+  getConversationConfig: (conversationId) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHAT_GET_CONFIG, conversationId),
 }
 
 const streamingApi = {

@@ -1,5 +1,6 @@
 import type { LlmResponse, LlmStreamChunk, LlmChatRequest } from '../../shared/types/agent'
 import type { LlmProvider } from '../../shared/types/index'
+import { OpenAICompatibleProvider } from './llm-provider-openai'
 
 // Provider-agnostic interface
 export interface ILLMProvider {
@@ -91,15 +92,15 @@ export function createLLMService(): ILLMService {
 // Provider factory - creates provider instances from DB config
 const providerCache = new Map<string, ILLMProvider>()
 
-export function createLLMProvider(provider: LlmProvider, _decryptedApiKey: string): ILLMProvider {
+export function createLLMProvider(provider: LlmProvider, decryptedApiKey: string): ILLMProvider {
   const cacheKey = provider.id
 
   const cached = providerCache.get(cacheKey)
   if (cached) return cached
 
-  // For now, always return MockLLMProvider
-  // Real OpenAI-compatible implementation will be added in T7
-  const instance = new MockLLMProvider()
+  const instance = decryptedApiKey
+    ? new OpenAICompatibleProvider(provider, decryptedApiKey)
+    : new MockLLMProvider()
   providerCache.set(cacheKey, instance)
   return instance
 }
