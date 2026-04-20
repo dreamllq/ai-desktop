@@ -127,6 +127,10 @@ export const useChatStore = defineStore('chat', () => {
       const result = await chatApi.sendMessage(currentConversationId.value, content)
       if (result.success && result.data) {
         streamingMessageId.value = result.data.id
+        // Immediately add user message to local state so it appears in the UI
+        const convId = currentConversationId.value
+        const currentMsgs = messages.value.get(convId) || []
+        messages.value.set(convId, [...currentMsgs, result.data])
       } else {
         error.value = result.error || 'Failed to send message'
         isStreaming.value = false
