@@ -1,7 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { IPC_CHANNELS } from '@shared/types'
-import type { CustomAPI } from '@shared/types'
+import { IPC_CHANNELS, IPC_STREAM_EVENTS } from '@shared/types'
+import type {
+  CustomAPI,
+  StreamTokenEvent,
+  StreamEndEvent,
+  StreamErrorEvent,
+  StreamToolCallEvent,
+  StreamToolResultEvent,
+} from '@shared/types'
 
 const api: CustomAPI = {
   ping: () => ipcRenderer.invoke(IPC_CHANNELS.PING),
@@ -30,10 +37,41 @@ const api: CustomAPI = {
   setActiveConversation: (id) => ipcRenderer.invoke(IPC_CHANNELS.CHAT_SET_ACTIVE_CONVERSATION, id),
 }
 
+const streamingApi = {
+  onStreamToken: (callback: (event: Electron.IpcRendererEvent, data: StreamTokenEvent) => void) => {
+    ipcRenderer.on(IPC_STREAM_EVENTS.CHAT_STREAM_TOKEN, callback)
+    return () => ipcRenderer.removeListener(IPC_STREAM_EVENTS.CHAT_STREAM_TOKEN, callback)
+  },
+  onStreamEnd: (callback: (event: Electron.IpcRendererEvent, data: StreamEndEvent) => void) => {
+    ipcRenderer.on(IPC_STREAM_EVENTS.CHAT_STREAM_END, callback)
+    return () => ipcRenderer.removeListener(IPC_STREAM_EVENTS.CHAT_STREAM_END, callback)
+  },
+  onStreamError: (callback: (event: Electron.IpcRendererEvent, data: StreamErrorEvent) => void) => {
+    ipcRenderer.on(IPC_STREAM_EVENTS.CHAT_STREAM_ERROR, callback)
+    return () => ipcRenderer.removeListener(IPC_STREAM_EVENTS.CHAT_STREAM_ERROR, callback)
+  },
+  onStreamToolCall: (
+    callback: (event: Electron.IpcRendererEvent, data: StreamToolCallEvent) => void,
+  ) => {
+    ipcRenderer.on(IPC_STREAM_EVENTS.CHAT_STREAM_TOOL_CALL, callback)
+    return () => ipcRenderer.removeListener(IPC_STREAM_EVENTS.CHAT_STREAM_TOOL_CALL, callback)
+  },
+  onStreamToolResult: (
+    callback: (event: Electron.IpcRendererEvent, data: StreamToolResultEvent) => void,
+  ) => {
+    ipcRenderer.on(IPC_STREAM_EVENTS.CHAT_STREAM_TOOL_RESULT, callback)
+    return () => ipcRenderer.removeListener(IPC_STREAM_EVENTS.CHAT_STREAM_TOOL_RESULT, callback)
+  },
+  abortStream: (conversationId: string) => {
+    return ipcRenderer.invoke(IPC_STREAM_EVENTS.CHAT_STREAM_ABORT, conversationId)
+  },
+}
+
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('streaming', streamingApi)
   } catch (error) {
     console.error(error)
   }
@@ -42,4 +80,6 @@ if (process.contextIsolated) {
   window.electron = electronAPI
   // @ts-ignore (define in dts)
   window.api = api
+  // @ts-ignore (define in dts)
+  window.streaming = streamingApi
 }

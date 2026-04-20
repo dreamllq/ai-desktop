@@ -5,6 +5,14 @@ import { DatabaseService } from '../database'
 import { createSettingsWindow, createAboutWindow } from '../windows'
 import { createLLMService } from '../services/llm-service'
 
+function db(): DatabaseService {
+  return DatabaseService.getInstance()
+}
+
+function repos() {
+  return db().repositories
+}
+
 export function registerIpcHandlers(): void {
   ipcMain.handle(IPC_CHANNELS.PING, () => 'pong')
 
@@ -20,11 +28,11 @@ export function registerIpcHandlers(): void {
   })
 
   ipcMain.handle(IPC_CHANNELS.GET_SETTING, (_event, key: string): string | null => {
-    return DatabaseService.getInstance().getSetting(key)
+    return db().getSetting(key)
   })
 
   ipcMain.handle(IPC_CHANNELS.SET_SETTING, (_event, key: string, value: string): void => {
-    DatabaseService.getInstance().setSetting(key, value)
+    db().setSetting(key, value)
   })
 
   ipcMain.handle(IPC_CHANNELS.OPEN_SETTINGS, () => {
@@ -41,7 +49,7 @@ export function registerIpcHandlers(): void {
   // LLM Provider handlers
   ipcMain.handle(IPC_CHANNELS.LLM_LIST_PROVIDERS, () => {
     try {
-      const providers = DatabaseService.getInstance().listProviders()
+      const providers = db().listProviders()
       return { success: true as const, data: providers }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -50,7 +58,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.LLM_GET_PROVIDER, (_event, id: string) => {
     try {
-      const provider = DatabaseService.getInstance().getProviderPublic(id)
+      const provider = db().getProviderPublic(id)
       if (!provider) {
         return { success: false as const, error: 'Provider not found' }
       }
@@ -75,7 +83,7 @@ export function registerIpcHandlers(): void {
       if (data.timeout !== undefined && (typeof data.timeout !== 'number' || data.timeout <= 0)) {
         return { success: false as const, error: 'Timeout must be a positive number' }
       }
-      const id = DatabaseService.getInstance().createProvider(data)
+      const id = db().createProvider(data)
       return { success: true as const, data: id }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -99,7 +107,7 @@ export function registerIpcHandlers(): void {
             return { success: false as const, error: 'Invalid baseUrl format' }
           }
         }
-        const result = DatabaseService.getInstance().updateProvider(id, updates)
+        const result = db().updateProvider(id, updates)
         return { success: true as const, data: result }
       } catch (error) {
         return { success: false as const, error: String(error) }
@@ -112,7 +120,7 @@ export function registerIpcHandlers(): void {
       if (!id) {
         return { success: false as const, error: 'Provider ID is required' }
       }
-      const result = DatabaseService.getInstance().deleteProvider(id)
+      const result = db().deleteProvider(id)
       return { success: true as const, data: result }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -122,7 +130,7 @@ export function registerIpcHandlers(): void {
   // Chat handlers
   ipcMain.handle(IPC_CHANNELS.CHAT_LIST_CONVERSATIONS, () => {
     try {
-      const conversations = DatabaseService.getInstance().listConversations()
+      const conversations = repos().conversation.list()
       return { success: true as const, data: conversations }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -134,7 +142,7 @@ export function registerIpcHandlers(): void {
       if (!id) {
         return { success: false as const, error: 'Conversation ID is required' }
       }
-      const conversation = DatabaseService.getInstance().getConversation(id)
+      const conversation = repos().conversation.get(id)
       return { success: true as const, data: conversation }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -143,7 +151,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.CHAT_CREATE_CONVERSATION, (_event, title?: string) => {
     try {
-      const conversation = DatabaseService.getInstance().createConversation(title)
+      const conversation = repos().conversation.create(title)
       return { success: true as const, data: conversation }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -158,7 +166,7 @@ export function registerIpcHandlers(): void {
       if (!title || !title.trim()) {
         return { success: false as const, error: 'Title is required' }
       }
-      const result = DatabaseService.getInstance().updateConversation(id, title)
+      const result = repos().conversation.update(id, title)
       return { success: true as const, data: result }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -170,7 +178,7 @@ export function registerIpcHandlers(): void {
       if (!id) {
         return { success: false as const, error: 'Conversation ID is required' }
       }
-      const result = DatabaseService.getInstance().deleteConversation(id)
+      const result = repos().conversation.delete(id)
       return { success: true as const, data: result }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -182,7 +190,7 @@ export function registerIpcHandlers(): void {
       if (!conversationId) {
         return { success: false as const, error: 'Conversation ID is required' }
       }
-      const messages = DatabaseService.getInstance().listMessages(conversationId)
+      const messages = repos().message.list(conversationId)
       return { success: true as const, data: messages }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -200,28 +208,25 @@ export function registerIpcHandlers(): void {
           return { success: false as const, error: 'Message content is required' }
         }
 
-        const db = DatabaseService.getInstance()
+        const { conversation: convRepo, message: msgRepo } = repos()
 
-        // Save user message
-        db.createMessage(conversationId, 'user', content.trim())
+        msgRepo.create(conversationId, 'user', content.trim())
 
-        // Check if this is the first user message - update conversation title
-        const conversation = db.getConversation(conversationId)
+        const conversation = convRepo.get(conversationId)
         if (conversation && conversation.title === '新的对话') {
           const title = content.trim().substring(0, 20)
-          db.updateConversation(conversationId, title)
+          convRepo.update(conversationId, title)
         }
 
-        // Get all messages for LLM context
-        const messages = db.listMessages(conversationId)
+        const messages = msgRepo.list(conversationId)
 
-        // Call LLM service
         const llmService = createLLMService()
-        const llmMessages = messages.map((m) => ({ role: m.role, content: m.content }))
+        const llmMessages = messages
+          .filter((m) => m.role !== 'tool')
+          .map((m) => ({ role: m.role as 'user' | 'assistant' | 'system', content: m.content }))
         const response = await llmService.sendMessage(conversationId, llmMessages)
 
-        // Save AI response
-        const assistantMessage = db.createMessage(conversationId, 'assistant', response.content)
+        const assistantMessage = msgRepo.create(conversationId, 'assistant', response.content)
 
         return { success: true as const, data: assistantMessage }
       } catch (error) {
@@ -232,7 +237,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.CHAT_GET_ACTIVE_CONVERSATION, () => {
     try {
-      const id = DatabaseService.getInstance().getActiveConversationId()
+      const id = db().getActiveConversationId()
       return { success: true as const, data: id }
     } catch (error) {
       return { success: false as const, error: String(error) }
@@ -241,7 +246,7 @@ export function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.CHAT_SET_ACTIVE_CONVERSATION, (_event, id: string | null) => {
     try {
-      DatabaseService.getInstance().setActiveConversationId(id)
+      db().setActiveConversationId(id)
       return { success: true as const, data: undefined }
     } catch (error) {
       return { success: false as const, error: String(error) }

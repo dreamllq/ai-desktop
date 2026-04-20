@@ -28,6 +28,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "3.0.2",
     "@electron-toolkit/utils": "4.0.0",
+    "@modelcontextprotocol/sdk": "1.29.0",
     "better-sqlite3": "12.9.0",
     "electron-updater": "6.8.3",
     "markdown-it": "^14.1.1",

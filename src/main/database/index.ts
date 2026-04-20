@@ -11,10 +11,26 @@ import type {
   LlmProviderUpdate,
   Message,
 } from '@shared/types'
+import { ConversationRepository } from '../repositories/conversation'
+import { MessageRepository } from '../repositories/message'
+import { AgentRepository } from '../repositories/agent'
+import { SkillRepository } from '../repositories/skill'
+import { McpServerRepository } from '../repositories/mcp-server'
+import { ToolDefinitionRepository } from '../repositories/tool-definition'
+
+export interface Repositories {
+  conversation: ConversationRepository
+  message: MessageRepository
+  agent: AgentRepository
+  skill: SkillRepository
+  mcpServer: McpServerRepository
+  toolDefinition: ToolDefinitionRepository
+}
 
 export class DatabaseService {
   private db: Database.Database
   private static instance: DatabaseService | null = null
+  private _repositories: Repositories | null = null
 
   private constructor(dbPath: string) {
     this.db = new Database(dbPath)
@@ -26,6 +42,13 @@ export class DatabaseService {
       DatabaseService.instance = new DatabaseService(dbPath)
     }
     return DatabaseService.instance
+  }
+
+  get repositories(): Repositories {
+    if (!this._repositories) {
+      throw new Error('Database not initialized. Call initialize() first.')
+    }
+    return this._repositories
   }
 
   initialize(): void {
@@ -83,6 +106,116 @@ export class DatabaseService {
       )
       this.db.exec('CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at)')
       this.db.pragma('user_version = 2')
+    }
+
+    if (version <= 2) {
+      // New tables for agent system
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS agents (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT,
+          type TEXT NOT NULL CHECK(type IN ('remote','local')),
+          config TEXT NOT NULL,
+          manifest TEXT,
+          enabled INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )
+      `)
+
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS skills (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          description TEXT,
+          source TEXT NOT NULL CHECK(source IN ('built-in','user-defined')),
+          file_path TEXT,
+          manifest TEXT NOT NULL,
+          content TEXT NOT NULL,
+          enabled INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )
+      `)
+
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS mcp_servers (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          transport_type TEXT NOT NULL CHECK(transport_type IN ('stdio','sse')),
+          config TEXT NOT NULL,
+          enabled INTEGER DEFAULT 1,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        )
+      `)
+
+      this.db.exec(`
+        CREATE TABLE IF NOT EXISTS tool_definitions (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL UNIQUE,
+          description TEXT,
+          input_schema TEXT NOT NULL,
+          source_mcp_server_id TEXT,
+          FOREIGN KEY (source_mcp_server_id) REFERENCES mcp_servers(id)
+        )
+      `)
+
+      // Alter conversations table — add agent/model/skill columns
+      try {
+        this.db.exec('ALTER TABLE conversations ADD COLUMN agent_id TEXT')
+      } catch {
+        /* column may already exist */
+      }
+      try {
+        this.db.exec('ALTER TABLE conversations ADD COLUMN model_id TEXT')
+      } catch {
+        /* column may already exist */
+      }
+      try {
+        this.db.exec("ALTER TABLE conversations ADD COLUMN skill_ids TEXT DEFAULT '[]'")
+      } catch {
+        /* column may already exist */
+      }
+
+      // Recreate messages table to add 'tool' role + new columns
+      this.db.exec(`
+        CREATE TABLE messages_new (
+          id TEXT PRIMARY KEY,
+          conversation_id TEXT NOT NULL,
+          role TEXT NOT NULL CHECK(role IN ('user','assistant','system','tool')),
+          content TEXT NOT NULL,
+          tool_calls TEXT,
+          tool_call_id TEXT,
+          model TEXT,
+          token_usage TEXT,
+          created_at INTEGER NOT NULL,
+          FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+        )
+      `)
+      this.db.exec(`
+        INSERT INTO messages_new (id, conversation_id, role, content, created_at)
+        SELECT id, conversation_id, role, content, created_at FROM messages
+      `)
+      this.db.exec('DROP TABLE messages')
+      this.db.exec('ALTER TABLE messages_new RENAME TO messages')
+      this.db.exec(
+        'CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id)',
+      )
+      this.db.exec('CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at)')
+
+      this.db.pragma('user_version = 3')
+    }
+
+    // Initialize repositories after migrations
+    this._repositories = {
+      conversation: new ConversationRepository(this.db),
+      message: new MessageRepository(this.db),
+      agent: new AgentRepository(this.db),
+      skill: new SkillRepository(this.db),
+      mcpServer: new McpServerRepository(this.db),
+      toolDefinition: new ToolDefinitionRepository(this.db),
     }
   }
 
@@ -142,25 +275,6 @@ export class DatabaseService {
       customHeaders: JSON.parse((row.custom_headers as string) || '[]'),
       createdAt: row.created_at as number,
       updatedAt: row.updated_at as number,
-    }
-  }
-
-  private rowToConversation(row: Record<string, unknown>): Conversation {
-    return {
-      id: row.id as string,
-      title: row.title as string,
-      createdAt: row.created_at as number,
-      updatedAt: row.updated_at as number,
-    }
-  }
-
-  private rowToMessage(row: Record<string, unknown>): Message {
-    return {
-      id: row.id as string,
-      conversationId: row.conversation_id as string,
-      role: row.role as 'user' | 'assistant' | 'system',
-      content: row.content as string,
-      createdAt: row.created_at as number,
     }
   }
 
@@ -312,70 +426,36 @@ export class DatabaseService {
     return result.changes > 0
   }
 
-  // ── Conversation CRUD ──
+  // ── Conversation CRUD (delegated to repository) ──
 
   createConversation(title?: string): Conversation {
-    const id = randomUUID()
-    const now = Date.now()
-    this.db
-      .prepare('INSERT INTO conversations (id, title, created_at, updated_at) VALUES (?, ?, ?, ?)')
-      .run(id, title || '新的对话', now, now)
-    return { id, title: title || '新的对话', createdAt: now, updatedAt: now }
+    return this.repositories.conversation.create(title)
   }
 
   getConversation(id: string): Conversation | null {
-    const row = this.db.prepare('SELECT * FROM conversations WHERE id = ?').get(id) as
-      | Record<string, unknown>
-      | undefined
-    if (!row) return null
-    return this.rowToConversation(row)
+    return this.repositories.conversation.get(id)
   }
 
   listConversations(): Conversation[] {
-    const rows = this.db
-      .prepare('SELECT * FROM conversations ORDER BY updated_at DESC')
-      .all() as Record<string, unknown>[]
-    return rows.map((row) => this.rowToConversation(row))
+    return this.repositories.conversation.list()
   }
 
   updateConversation(id: string, title: string): boolean {
-    const now = Date.now()
-    const result = this.db
-      .prepare('UPDATE conversations SET title = ?, updated_at = ? WHERE id = ?')
-      .run(title, now, id)
-    return result.changes > 0
+    return this.repositories.conversation.update(id, title)
   }
 
   deleteConversation(id: string): boolean {
-    const result = this.db.prepare('DELETE FROM conversations WHERE id = ?').run(id)
-    return result.changes > 0
+    return this.repositories.conversation.delete(id)
   }
 
-  // ── Message CRUD ──
+  // ── Message CRUD (delegated to repository) ──
 
   createMessage(conversationId: string, role: string, content: string): Message {
-    const id = randomUUID()
-    const now = Date.now()
-    this.db
-      .prepare(
-        'INSERT INTO messages (id, conversation_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)',
-      )
-      .run(id, conversationId, role, content, now)
-    this.db.prepare('UPDATE conversations SET updated_at = ? WHERE id = ?').run(now, conversationId)
-    return {
-      id,
-      conversationId,
-      role: role as 'user' | 'assistant' | 'system',
-      content,
-      createdAt: now,
-    }
+    return this.repositories.message.create(conversationId, role, content)
   }
 
   listMessages(conversationId: string): Message[] {
-    const rows = this.db
-      .prepare('SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC')
-      .all(conversationId) as Record<string, unknown>[]
-    return rows.map((row) => this.rowToMessage(row))
+    return this.repositories.message.list(conversationId)
   }
 
   getActiveConversationId(): string | null {

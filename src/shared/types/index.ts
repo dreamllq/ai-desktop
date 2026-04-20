@@ -1,3 +1,6 @@
+export * from './agent'
+import type { ToolCall } from './agent'
+
 export const IPC_CHANNELS = {
   PING: 'ping',
   GET_APP_INFO: 'get-app-info',
@@ -19,6 +22,15 @@ export const IPC_CHANNELS = {
   CHAT_SEND_MESSAGE: 'chat-send-message',
   CHAT_GET_ACTIVE_CONVERSATION: 'chat-get-active-conversation',
   CHAT_SET_ACTIVE_CONVERSATION: 'chat-set-active-conversation',
+} as const
+
+export const IPC_STREAM_EVENTS = {
+  CHAT_STREAM_TOKEN: 'chat-stream-token',
+  CHAT_STREAM_END: 'chat-stream-end',
+  CHAT_STREAM_ERROR: 'chat-stream-error',
+  CHAT_STREAM_TOOL_CALL: 'chat-stream-tool-call',
+  CHAT_STREAM_TOOL_RESULT: 'chat-stream-tool-result',
+  CHAT_STREAM_ABORT: 'chat-stream-abort',
 } as const
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS]
@@ -116,6 +128,9 @@ export interface LlmProviderUpdate {
 export interface Conversation {
   id: string
   title: string
+  agentId?: string
+  modelId?: string
+  skillIds?: string[]
   createdAt: number
   updatedAt: number
 }
@@ -123,8 +138,12 @@ export interface Conversation {
 export interface Message {
   id: string
   conversationId: string
-  role: 'user' | 'assistant' | 'system'
+  role: 'user' | 'assistant' | 'system' | 'tool'
   content: string
+  toolCalls?: ToolCall[]
+  toolCallId?: string
+  model?: string
+  tokenUsage?: { promptTokens: number; completionTokens: number; totalTokens: number }
   createdAt: number
 }
 
