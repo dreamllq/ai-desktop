@@ -33,10 +33,13 @@ function repos(): Repositories {
   return db().repositories
 }
 
-export function registerIpcHandlers(): void {
+export async function registerIpcHandlers(): Promise<void> {
   const agentRegistry = new AgentRegistry(repos().agent)
   const skillManager = new SkillManager(repos().skill)
   const mcpManager = getMcpManager()
+
+  await agentRegistry.initialize()
+  await skillManager.initialize()
 
   const toolRegistry = getToolRegistry()
   toolRegistry.initialize(mcpManager)
