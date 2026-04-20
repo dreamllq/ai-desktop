@@ -1,6 +1,9 @@
 import type { IpcResult, ModelInfo } from '@shared/types'
 
-export function useModel() {
+export function useModel(): {
+  listAvailableModels: () => Promise<IpcResult<ModelInfo[]>>
+  switchModel: (conversationId: string, modelId: string) => Promise<IpcResult<boolean>>
+} {
   async function listAvailableModels(): Promise<IpcResult<ModelInfo[]>> {
     return window.api.listAvailableModels()
   }

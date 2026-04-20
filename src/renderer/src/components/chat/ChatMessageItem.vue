@@ -3,7 +3,7 @@ import type { Message } from '@shared/types'
 import ChatMarkdown from './ChatMarkdown.vue'
 import ToolCallDisplay from './ToolCallDisplay.vue'
 
-const props = defineProps<{
+defineProps<{
   message: Message
   isStreaming?: boolean
   streamingContent?: string

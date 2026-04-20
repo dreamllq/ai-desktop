@@ -12,7 +12,7 @@ import type {
   CreateConversationWithConfigParams,
   ExecutionRequest,
 } from '@shared/types'
-import { DatabaseService } from '../database'
+import { DatabaseService, type Repositories } from '../database'
 import { createSettingsWindow, createAboutWindow } from '../windows'
 import { createLLMProvider } from '../services/llm-service'
 import { AgentRegistry } from '../services/agent-registry'
@@ -29,7 +29,7 @@ function db(): DatabaseService {
   return DatabaseService.getInstance()
 }
 
-function repos() {
+function repos(): Repositories {
   return db().repositories
 }
 

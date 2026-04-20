@@ -107,10 +107,5 @@ if (process.contextIsolated) {
     console.error(error)
   }
 } else {
-  // @ts-ignore (define in dts)
-  window.electron = electronAPI
-  // @ts-ignore (define in dts)
-  window.api = api
-  // @ts-ignore (define in dts)
-  window.streaming = streamingApi
+  Object.assign(globalThis, { electron: electronAPI, api, streaming: streamingApi })
 }

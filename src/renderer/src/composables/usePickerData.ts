@@ -5,7 +5,20 @@ import { useSkill } from './useSkill'
 import { useChatStore } from '@renderer/stores/chat'
 import type { AgentConfig, SkillConfig, ModelInfo } from '@shared/types'
 
-export function usePickerData() {
+export function usePickerData(): {
+  availableModels: import('vue').ComputedRef<import('@shared/types').ModelInfo[]>
+  availableAgents: import('vue').ComputedRef<import('@shared/types').AgentConfig[]>
+  availableSkills: import('vue').ComputedRef<import('@shared/types').SkillConfig[]>
+  currentConversationConfig: import('vue').ComputedRef<{
+    agentId: string | null
+    modelId: string | null
+    skillIds: string[]
+  }>
+  loadAll: () => Promise<void>
+  refreshModels: () => Promise<void>
+  refreshAgents: () => Promise<void>
+  refreshSkills: () => Promise<void>
+} {
   const agentApi = useAgent()
   const modelApi = useModel()
   const skillApi = useSkill()

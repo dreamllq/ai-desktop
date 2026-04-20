@@ -1,6 +1,10 @@
 import type { IpcResult, SkillConfig } from '@shared/types'
 
-export function useSkill() {
+export function useSkill(): {
+  listSkills: () => Promise<IpcResult<SkillConfig[]>>
+  getSkill: (id: string) => Promise<IpcResult<SkillConfig | null>>
+  reloadSkills: () => Promise<IpcResult<boolean>>
+} {
   async function listSkills(): Promise<IpcResult<SkillConfig[]>> {
     return window.api.listSkills()
   }
