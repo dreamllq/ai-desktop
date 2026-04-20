@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useChatStore } from '@renderer/stores/chat'
 
+const router = useRouter()
 const store = useChatStore()
 
 function handleCreate(): void {
@@ -18,7 +20,7 @@ function handleDelete(id: string): void {
 }
 
 function openSettings(): void {
-  window.api.openSettings()
+  router.push('/settings')
 }
 </script>
 
