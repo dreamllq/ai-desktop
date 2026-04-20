@@ -3,6 +3,7 @@ import { IPC_CHANNELS } from '@shared/types'
 import type { AppInfo, LlmProviderCreate, LlmProviderUpdate } from '@shared/types'
 import { DatabaseService } from '../database'
 import { createSettingsWindow, createAboutWindow } from '../windows'
+import { createLLMService } from '../services/llm-service'
 
 export function registerIpcHandlers(): void {
   ipcMain.handle(IPC_CHANNELS.PING, () => 'pong')
@@ -113,6 +114,135 @@ export function registerIpcHandlers(): void {
       }
       const result = DatabaseService.getInstance().deleteProvider(id)
       return { success: true as const, data: result }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  // Chat handlers
+  ipcMain.handle(IPC_CHANNELS.CHAT_LIST_CONVERSATIONS, () => {
+    try {
+      const conversations = DatabaseService.getInstance().listConversations()
+      return { success: true as const, data: conversations }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_GET_CONVERSATION, (_event, id: string) => {
+    try {
+      if (!id) {
+        return { success: false as const, error: 'Conversation ID is required' }
+      }
+      const conversation = DatabaseService.getInstance().getConversation(id)
+      return { success: true as const, data: conversation }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_CREATE_CONVERSATION, (_event, title?: string) => {
+    try {
+      const conversation = DatabaseService.getInstance().createConversation(title)
+      return { success: true as const, data: conversation }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_UPDATE_CONVERSATION, (_event, id: string, title: string) => {
+    try {
+      if (!id) {
+        return { success: false as const, error: 'Conversation ID is required' }
+      }
+      if (!title || !title.trim()) {
+        return { success: false as const, error: 'Title is required' }
+      }
+      const result = DatabaseService.getInstance().updateConversation(id, title)
+      return { success: true as const, data: result }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_DELETE_CONVERSATION, (_event, id: string) => {
+    try {
+      if (!id) {
+        return { success: false as const, error: 'Conversation ID is required' }
+      }
+      const result = DatabaseService.getInstance().deleteConversation(id)
+      return { success: true as const, data: result }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_LIST_MESSAGES, (_event, conversationId: string) => {
+    try {
+      if (!conversationId) {
+        return { success: false as const, error: 'Conversation ID is required' }
+      }
+      const messages = DatabaseService.getInstance().listMessages(conversationId)
+      return { success: true as const, data: messages }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(
+    IPC_CHANNELS.CHAT_SEND_MESSAGE,
+    async (_event, conversationId: string, content: string) => {
+      try {
+        if (!conversationId) {
+          return { success: false as const, error: 'Conversation ID is required' }
+        }
+        if (!content || !content.trim()) {
+          return { success: false as const, error: 'Message content is required' }
+        }
+
+        const db = DatabaseService.getInstance()
+
+        // Save user message
+        db.createMessage(conversationId, 'user', content.trim())
+
+        // Check if this is the first user message - update conversation title
+        const conversation = db.getConversation(conversationId)
+        if (conversation && conversation.title === '新的对话') {
+          const title = content.trim().substring(0, 20)
+          db.updateConversation(conversationId, title)
+        }
+
+        // Get all messages for LLM context
+        const messages = db.listMessages(conversationId)
+
+        // Call LLM service
+        const llmService = createLLMService()
+        const llmMessages = messages.map((m) => ({ role: m.role, content: m.content }))
+        const response = await llmService.sendMessage(conversationId, llmMessages)
+
+        // Save AI response
+        const assistantMessage = db.createMessage(conversationId, 'assistant', response.content)
+
+        return { success: true as const, data: assistantMessage }
+      } catch (error) {
+        return { success: false as const, error: String(error) }
+      }
+    },
+  )
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_GET_ACTIVE_CONVERSATION, () => {
+    try {
+      const id = DatabaseService.getInstance().getActiveConversationId()
+      return { success: true as const, data: id }
+    } catch (error) {
+      return { success: false as const, error: String(error) }
+    }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.CHAT_SET_ACTIVE_CONVERSATION, (_event, id: string | null) => {
+    try {
+      DatabaseService.getInstance().setActiveConversationId(id)
+      return { success: true as const, data: undefined }
     } catch (error) {
       return { success: false as const, error: String(error) }
     }
