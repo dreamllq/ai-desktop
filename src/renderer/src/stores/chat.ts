@@ -182,8 +182,11 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  function selectModel(modelId: string | null): void {
+  async function selectModel(modelId: string | null): Promise<void> {
     selectedModelId.value = modelId
+    if (modelId && currentConversationId.value) {
+      await chatApi.switchModel(currentConversationId.value, modelId)
+    }
   }
 
   function selectAgent(agentId: string | null): void {

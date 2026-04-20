@@ -23,7 +23,7 @@ interface ToolCallAccumulator {
 }
 
 export interface ExecutionEngineDeps {
-  getProvider: (providerId: string, decryptedApiKey: string) => ILLMProvider
+  getProviderForModel: (modelId: string) => ILLMProvider
   toolRegistry: ToolRegistry
   agentRegistry: AgentRegistry
   skillManager: SkillManager
@@ -79,7 +79,7 @@ export class ExecutionEngine {
       })
 
       const tools = await this.deps.toolRegistry.getAllTools()
-      const provider = this.deps.getProvider(agentConfig.manifest.name, request.modelId)
+      const provider = this.deps.getProviderForModel(request.modelId)
 
       for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
         if (abortSignal?.aborted) break

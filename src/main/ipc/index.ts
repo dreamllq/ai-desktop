@@ -42,10 +42,15 @@ export function registerIpcHandlers(): void {
   toolRegistry.initialize(mcpManager)
 
   const engine = createExecutionEngine({
-    getProvider: (providerId: string, decryptedApiKey: string) => {
-      const provider = db().getProviderById(providerId)
-      if (!provider) throw new Error(`Provider not found: ${providerId}`)
-      return createLLMProvider(provider, decryptedApiKey)
+    getProviderForModel: (modelId: string) => {
+      const providers = db().listProviders()
+      const provider = providers.find(
+        (p) => p.enabled && (p.models.includes(modelId) || p.defaultModel === modelId),
+      )
+      if (!provider) throw new Error(`No provider found for model: ${modelId}`)
+      const fullProvider = db().getProviderById(provider.id)
+      if (!fullProvider) throw new Error(`Provider not found: ${provider.id}`)
+      return createLLMProvider(fullProvider, fullProvider.encryptedKey)
     },
     toolRegistry,
     agentRegistry,
