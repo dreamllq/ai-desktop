@@ -4,7 +4,7 @@ import { useChatStore } from '@renderer/stores/chat'
 const store = useChatStore()
 
 function handleCreate(): void {
-  store.createConversation()
+  store.createConversationWithConfig()
 }
 
 function handleSelect(id: string): void {

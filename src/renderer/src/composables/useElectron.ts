@@ -1,11 +1,24 @@
 import type {
   AppInfo,
   Conversation,
+  ConversationConfig,
   CustomAPI,
   LlmProviderCreate,
   LlmProviderListItem,
   LlmProviderUpdate,
   Message,
+  AgentRegisterParams,
+  AgentUpdateParams,
+  AgentConfig,
+  SkillConfig,
+  McpServerConfig,
+  McpServerAddParams,
+  McpServerUpdateParams,
+  McpToolDefinition,
+  McpToolResult,
+  ModelInfo,
+  CreateConversationWithConfigParams,
+  IpcResult,
 } from '@shared/types'
 
 export function useElectron(): CustomAPI {
@@ -212,6 +225,98 @@ export function useElectron(): CustomAPI {
     }>
   }
 
+  function listAgents(): Promise<IpcResult<AgentConfig[]>> {
+    return api.listAgents()
+  }
+
+  function getAgent(id: string): Promise<IpcResult<AgentConfig | null>> {
+    return api.getAgent(id)
+  }
+
+  function registerAgent(params: AgentRegisterParams): Promise<IpcResult<string>> {
+    return api.registerAgent(params)
+  }
+
+  function updateAgent(id: string, params: AgentUpdateParams): Promise<IpcResult<boolean>> {
+    return api.updateAgent(id, params)
+  }
+
+  function deleteAgent(id: string): Promise<IpcResult<boolean>> {
+    return api.deleteAgent(id)
+  }
+
+  function listSkills(): Promise<IpcResult<SkillConfig[]>> {
+    return api.listSkills()
+  }
+
+  function getSkill(id: string): Promise<IpcResult<SkillConfig | null>> {
+    return api.getSkill(id)
+  }
+
+  function reloadSkills(): Promise<IpcResult<boolean>> {
+    return api.reloadSkills()
+  }
+
+  function deleteSkill(id: string): Promise<IpcResult<boolean>> {
+    return api.deleteSkill(id)
+  }
+
+  function listMcpServers(): Promise<IpcResult<McpServerConfig[]>> {
+    return api.listMcpServers()
+  }
+
+  function getMcpServer(id: string): Promise<IpcResult<McpServerConfig | null>> {
+    return api.getMcpServer(id)
+  }
+
+  function addMcpServer(params: McpServerAddParams): Promise<IpcResult<string>> {
+    return api.addMcpServer(params)
+  }
+
+  function updateMcpServer(id: string, params: McpServerUpdateParams): Promise<IpcResult<boolean>> {
+    return api.updateMcpServer(id, params)
+  }
+
+  function deleteMcpServer(id: string): Promise<IpcResult<boolean>> {
+    return api.deleteMcpServer(id)
+  }
+
+  function listMcpTools(serverId: string): Promise<IpcResult<McpToolDefinition[]>> {
+    return api.listMcpTools(serverId)
+  }
+
+  function executeMcpTool(
+    serverId: string,
+    toolName: string,
+    args: Record<string, unknown>,
+  ): Promise<IpcResult<McpToolResult>> {
+    return api.executeMcpTool(serverId, toolName, args)
+  }
+
+  function getMcpServerStatus(
+    serverId: string,
+  ): Promise<IpcResult<{ connected: boolean; error?: string }>> {
+    return api.getMcpServerStatus(serverId)
+  }
+
+  function listAvailableModels(): Promise<IpcResult<ModelInfo[]>> {
+    return api.listAvailableModels()
+  }
+
+  function createConversationWithConfig(
+    params: CreateConversationWithConfigParams,
+  ): Promise<IpcResult<Conversation>> {
+    return api.createConversationWithConfig(params)
+  }
+
+  function switchModel(conversationId: string, modelId: string): Promise<IpcResult<boolean>> {
+    return api.switchModel(conversationId, modelId)
+  }
+
+  function getConversationConfig(conversationId: string): Promise<IpcResult<ConversationConfig>> {
+    return api.getConversationConfig(conversationId)
+  }
+
   return {
     ping,
     getAppInfo,
@@ -233,5 +338,26 @@ export function useElectron(): CustomAPI {
     sendMessage,
     getActiveConversation,
     setActiveConversation,
+    listAgents,
+    getAgent,
+    registerAgent,
+    updateAgent,
+    deleteAgent,
+    listSkills,
+    getSkill,
+    reloadSkills,
+    deleteSkill,
+    listMcpServers,
+    getMcpServer,
+    addMcpServer,
+    updateMcpServer,
+    deleteMcpServer,
+    listMcpTools,
+    executeMcpTool,
+    getMcpServerStatus,
+    listAvailableModels,
+    createConversationWithConfig,
+    switchModel,
+    getConversationConfig,
   }
 }

@@ -1,4 +1,10 @@
-import type { IpcResult, Conversation, Message } from '@shared/types'
+import type {
+  IpcResult,
+  Conversation,
+  Message,
+  CreateConversationWithConfigParams,
+  ConversationConfig,
+} from '@shared/types'
 
 export function useChat(): {
   listConversations: () => Promise<IpcResult<Conversation[]>>
@@ -10,6 +16,11 @@ export function useChat(): {
   sendMessage: (conversationId: string, content: string) => Promise<IpcResult<Message>>
   getActiveConversation: () => Promise<IpcResult<string | null>>
   setActiveConversation: (id: string | null) => Promise<IpcResult<void>>
+  createConversationWithConfig: (
+    params: CreateConversationWithConfigParams,
+  ) => Promise<IpcResult<Conversation>>
+  switchModel: (conversationId: string, modelId: string) => Promise<IpcResult<boolean>>
+  getConversationConfig: (conversationId: string) => Promise<IpcResult<ConversationConfig>>
 } {
   async function listConversations(): Promise<IpcResult<Conversation[]>> {
     return window.api.listConversations()
@@ -47,6 +58,22 @@ export function useChat(): {
     return window.api.setActiveConversation(id)
   }
 
+  async function createConversationWithConfig(
+    params: CreateConversationWithConfigParams,
+  ): Promise<IpcResult<Conversation>> {
+    return window.api.createConversationWithConfig(params)
+  }
+
+  async function switchModel(conversationId: string, modelId: string): Promise<IpcResult<boolean>> {
+    return window.api.switchModel(conversationId, modelId)
+  }
+
+  async function getConversationConfig(
+    conversationId: string,
+  ): Promise<IpcResult<ConversationConfig>> {
+    return window.api.getConversationConfig(conversationId)
+  }
+
   return {
     listConversations,
     getConversation,
@@ -57,5 +84,8 @@ export function useChat(): {
     sendMessage,
     getActiveConversation,
     setActiveConversation,
+    createConversationWithConfig,
+    switchModel,
+    getConversationConfig,
   }
 }
