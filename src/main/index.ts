@@ -34,9 +34,9 @@ if (!gotTheLock) {
       optimizer.watchWindowShortcuts(window)
     })
 
-    registerIpcHandlers()
-
     DatabaseService.getInstance().initialize()
+
+    registerIpcHandlers()
 
     const mainWindow = createMainWindow()
 
