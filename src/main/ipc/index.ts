@@ -352,6 +352,14 @@ export function registerIpcHandlers(): void {
             providerName: provider.name,
           })
         }
+        if (provider.defaultModel && !provider.models.includes(provider.defaultModel)) {
+          models.push({
+            id: provider.defaultModel,
+            name: provider.defaultModel,
+            providerId: provider.id,
+            providerName: provider.name,
+          })
+        }
       }
       return { success: true, data: models }
     } catch (error) {
