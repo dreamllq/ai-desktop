@@ -10,6 +10,15 @@ export const IPC_CHANNELS = {
   LLM_CREATE_PROVIDER: 'llm-create-provider',
   LLM_UPDATE_PROVIDER: 'llm-update-provider',
   LLM_DELETE_PROVIDER: 'llm-delete-provider',
+  CHAT_LIST_CONVERSATIONS: 'chat-list-conversations',
+  CHAT_GET_CONVERSATION: 'chat-get-conversation',
+  CHAT_CREATE_CONVERSATION: 'chat-create-conversation',
+  CHAT_UPDATE_CONVERSATION: 'chat-update-conversation',
+  CHAT_DELETE_CONVERSATION: 'chat-delete-conversation',
+  CHAT_LIST_MESSAGES: 'chat-list-messages',
+  CHAT_SEND_MESSAGE: 'chat-send-message',
+  CHAT_GET_ACTIVE_CONVERSATION: 'chat-get-active-conversation',
+  CHAT_SET_ACTIVE_CONVERSATION: 'chat-set-active-conversation',
 } as const
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS]
@@ -104,6 +113,35 @@ export interface LlmProviderUpdate {
   customHeaders?: LlmCustomHeader[]
 }
 
+export interface Conversation {
+  id: string
+  title: string
+  createdAt: number
+  updatedAt: number
+}
+
+export interface Message {
+  id: string
+  conversationId: string
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  createdAt: number
+}
+
+export interface CreateConversationParams {
+  title?: string
+}
+
+export interface UpdateConversationParams {
+  id: string
+  title?: string
+}
+
+export interface SendMessageParams {
+  conversationId: string
+  content: string
+}
+
 // Custom API exposed via contextBridge — this is the contract between preload and renderer
 export interface CustomAPI {
   ping: () => Promise<string>
@@ -117,4 +155,13 @@ export interface CustomAPI {
   createProvider: (data: LlmProviderCreate) => Promise<IpcResult<string>>
   updateProvider: (id: string, updates: LlmProviderUpdate) => Promise<IpcResult<boolean>>
   deleteProvider: (id: string) => Promise<IpcResult<boolean>>
+  listConversations: () => Promise<IpcResult<Conversation[]>>
+  getConversation: (id: string) => Promise<IpcResult<Conversation | null>>
+  createConversation: (title?: string) => Promise<IpcResult<Conversation>>
+  updateConversation: (id: string, title: string) => Promise<IpcResult<boolean>>
+  deleteConversation: (id: string) => Promise<IpcResult<boolean>>
+  listMessages: (conversationId: string) => Promise<IpcResult<Message[]>>
+  sendMessage: (conversationId: string, content: string) => Promise<IpcResult<Message>>
+  getActiveConversation: () => Promise<IpcResult<string | null>>
+  setActiveConversation: (id: string | null) => Promise<IpcResult<void>>
 }

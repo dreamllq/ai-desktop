@@ -1,9 +1,11 @@
 import type {
   AppInfo,
+  Conversation,
   CustomAPI,
   LlmProviderCreate,
   LlmProviderListItem,
   LlmProviderUpdate,
+  Message,
 } from '@shared/types'
 
 export function useElectron(): CustomAPI {
@@ -96,6 +98,120 @@ export function useElectron(): CustomAPI {
     }>
   }
 
+  function listConversations(): Promise<{
+    success: boolean
+    data?: Conversation[]
+    error?: string
+  }> {
+    return api.listConversations() as Promise<{
+      success: boolean
+      data?: Conversation[]
+      error?: string
+    }>
+  }
+
+  function getConversation(id: string): Promise<{
+    success: boolean
+    data?: Conversation | null
+    error?: string
+  }> {
+    return api.getConversation(id) as Promise<{
+      success: boolean
+      data?: Conversation | null
+      error?: string
+    }>
+  }
+
+  function createConversation(title?: string): Promise<{
+    success: boolean
+    data?: Conversation
+    error?: string
+  }> {
+    return api.createConversation(title) as Promise<{
+      success: boolean
+      data?: Conversation
+      error?: string
+    }>
+  }
+
+  function updateConversation(
+    id: string,
+    title: string,
+  ): Promise<{
+    success: boolean
+    data?: boolean
+    error?: string
+  }> {
+    return api.updateConversation(id, title) as Promise<{
+      success: boolean
+      data?: boolean
+      error?: string
+    }>
+  }
+
+  function deleteConversation(id: string): Promise<{
+    success: boolean
+    data?: boolean
+    error?: string
+  }> {
+    return api.deleteConversation(id) as Promise<{
+      success: boolean
+      data?: boolean
+      error?: string
+    }>
+  }
+
+  function listMessages(conversationId: string): Promise<{
+    success: boolean
+    data?: Message[]
+    error?: string
+  }> {
+    return api.listMessages(conversationId) as Promise<{
+      success: boolean
+      data?: Message[]
+      error?: string
+    }>
+  }
+
+  function sendMessage(
+    conversationId: string,
+    content: string,
+  ): Promise<{
+    success: boolean
+    data?: Message
+    error?: string
+  }> {
+    return api.sendMessage(conversationId, content) as Promise<{
+      success: boolean
+      data?: Message
+      error?: string
+    }>
+  }
+
+  function getActiveConversation(): Promise<{
+    success: boolean
+    data?: string | null
+    error?: string
+  }> {
+    return api.getActiveConversation() as Promise<{
+      success: boolean
+      data?: string | null
+      error?: string
+    }>
+  }
+
+  function setActiveConversation(id: string | null): Promise<{
+    success: boolean
+    data?: void
+    error?: string
+  }> {
+    return api.setActiveConversation(id) as Promise<{
+      success: boolean
+      data?: void
+      error?: string
+    }>
+  }
+
   return {
     ping,
     getAppInfo,
@@ -108,5 +224,14 @@ export function useElectron(): CustomAPI {
     createProvider,
     updateProvider,
     deleteProvider,
+    listConversations,
+    getConversation,
+    createConversation,
+    updateConversation,
+    deleteConversation,
+    listMessages,
+    sendMessage,
+    getActiveConversation,
+    setActiveConversation,
   }
 }

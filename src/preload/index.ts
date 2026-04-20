@@ -16,6 +16,18 @@ const api: CustomAPI = {
   updateProvider: (id, updates) =>
     ipcRenderer.invoke(IPC_CHANNELS.LLM_UPDATE_PROVIDER, id, updates),
   deleteProvider: (id) => ipcRenderer.invoke(IPC_CHANNELS.LLM_DELETE_PROVIDER, id),
+  listConversations: () => ipcRenderer.invoke(IPC_CHANNELS.CHAT_LIST_CONVERSATIONS),
+  getConversation: (id) => ipcRenderer.invoke(IPC_CHANNELS.CHAT_GET_CONVERSATION, id),
+  createConversation: (title?) => ipcRenderer.invoke(IPC_CHANNELS.CHAT_CREATE_CONVERSATION, title),
+  updateConversation: (id, title) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHAT_UPDATE_CONVERSATION, id, title),
+  deleteConversation: (id) => ipcRenderer.invoke(IPC_CHANNELS.CHAT_DELETE_CONVERSATION, id),
+  listMessages: (conversationId) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHAT_LIST_MESSAGES, conversationId),
+  sendMessage: (conversationId, content) =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHAT_SEND_MESSAGE, conversationId, content),
+  getActiveConversation: () => ipcRenderer.invoke(IPC_CHANNELS.CHAT_GET_ACTIVE_CONVERSATION),
+  setActiveConversation: (id) => ipcRenderer.invoke(IPC_CHANNELS.CHAT_SET_ACTIVE_CONVERSATION, id),
 }
 
 if (process.contextIsolated) {
