@@ -43,10 +43,10 @@ onBeforeUnmount(() => document.removeEventListener('click', onClickOutside))
   <div ref="dropdownRef" class="relative inline-block">
     <button
       type="button"
-      class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none"
+      class="inline-flex items-center gap-1.5 border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 bg-white hover:bg-gray-50 transition-colors max-w-[220px]"
       @click="toggle"
     >
-      <span class="font-medium">{{ displayLabel }}</span>
+      <span class="truncate">{{ displayLabel }}</span>
       <svg
         class="h-3.5 w-3.5 text-gray-400 transition-transform"
         :class="{ 'rotate-180': open }"
