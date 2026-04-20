@@ -26,6 +26,7 @@ def hello():
 `
 
 class MockLLMService implements ILLMService {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async sendMessage(_conversationId: string, _messages: LLMMessage[]): Promise<LLMResponse> {
     const delay = 500 + Math.random() * 500
     await new Promise((resolve) => setTimeout(resolve, delay))

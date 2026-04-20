@@ -8,11 +8,13 @@ const route = useRoute()
 const store = useAppStore()
 store.initialize()
 
-const showSidebar = computed(() => !route.path.startsWith('/settings'))
+const showAppLayout = computed(() => {
+  return !route.path.startsWith('/settings') && route.path !== '/'
+})
 </script>
 
 <template>
-  <AppLayout v-if="showSidebar">
+  <AppLayout v-if="showAppLayout">
     <RouterView />
   </AppLayout>
   <RouterView v-else />
