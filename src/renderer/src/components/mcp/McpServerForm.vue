@@ -145,31 +145,39 @@ async function handleTestConnection(): Promise<void> {
   if (!validateForm()) return
   testing.value = true
   testResult.value = null
-  const params = buildAddParams()
-  testResult.value = await store.testConnection(params)
-  testing.value = false
+  try {
+    const params = buildAddParams()
+    testResult.value = await store.testConnection(params)
+  } catch (err) {
+    testResult.value = { success: false, error: String(err) }
+  } finally {
+    testing.value = false
+  }
 }
 
 async function handleSubmit(): Promise<void> {
   if (!validateForm()) return
 
   saving.value = true
-
-  if (isEdit.value && props.server) {
-    const params = buildAddParams()
-    const success = await store.editServer(props.server.id, params)
-    if (success) {
-      props.onSaved()
+  try {
+    if (isEdit.value && props.server) {
+      const params = buildAddParams()
+      const success = await store.editServer(props.server.id, params)
+      if (success) {
+        props.onSaved()
+      }
+    } else {
+      const params = buildAddParams()
+      const success = await store.addServer(params)
+      if (success) {
+        props.onSaved()
+      }
     }
-  } else {
-    const params = buildAddParams()
-    const success = await store.addServer(params)
-    if (success) {
-      props.onSaved()
-    }
+  } catch {
+    // Error is handled by store, saving state will reset
+  } finally {
+    saving.value = false
   }
-
-  saving.value = false
 }
 </script>
 
