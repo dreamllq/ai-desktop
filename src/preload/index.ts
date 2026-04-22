@@ -45,6 +45,8 @@ const api: CustomAPI = {
   getSkill: (id) => ipcRenderer.invoke(IPC_CHANNELS.SKILL_GET, id),
   reloadSkills: () => ipcRenderer.invoke(IPC_CHANNELS.SKILL_RELOAD),
   deleteSkill: (id) => ipcRenderer.invoke(IPC_CHANNELS.SKILL_DELETE, id),
+  createSkill: (params) => ipcRenderer.invoke(IPC_CHANNELS.SKILL_CREATE, params),
+  updateSkill: (id, params) => ipcRenderer.invoke(IPC_CHANNELS.SKILL_UPDATE, id, params),
 
   listMcpServers: () => ipcRenderer.invoke(IPC_CHANNELS.MCP_LIST_SERVERS),
   getMcpServer: (id) => ipcRenderer.invoke(IPC_CHANNELS.MCP_GET_SERVER, id),
@@ -56,6 +58,10 @@ const api: CustomAPI = {
     ipcRenderer.invoke(IPC_CHANNELS.MCP_EXECUTE_TOOL, serverId, toolName, args),
   getMcpServerStatus: (serverId) =>
     ipcRenderer.invoke(IPC_CHANNELS.MCP_GET_SERVER_STATUS, serverId),
+  startMcpServer: (id) => ipcRenderer.invoke(IPC_CHANNELS.MCP_START_SERVER, id),
+  stopMcpServer: (id) => ipcRenderer.invoke(IPC_CHANNELS.MCP_STOP_SERVER, id),
+  testMcpConnection: (params) =>
+    ipcRenderer.invoke(IPC_CHANNELS.MCP_TEST_CONNECTION, params),
 
   listAvailableModels: () => ipcRenderer.invoke(IPC_CHANNELS.MODEL_LIST_AVAILABLE),
 

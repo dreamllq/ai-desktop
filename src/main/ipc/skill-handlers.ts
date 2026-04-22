@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { IPC_CHANNELS } from '../../shared/types/index'
-import type { IpcResult, SkillConfig } from '../../shared/types/index'
+import type { IpcResult, SkillConfig, SkillCreateParams, SkillUpdateParams } from '../../shared/types/index'
 import type { SkillManager } from '../services/skill-manager'
 
 export function registerSkillHandlers(getManager: () => SkillManager): void {
@@ -42,4 +42,31 @@ export function registerSkillHandlers(getManager: () => SkillManager): void {
       return { success: false, error: String(error) }
     }
   })
+
+  ipcMain.handle(
+    IPC_CHANNELS.SKILL_CREATE,
+    (_event, params: SkillCreateParams): IpcResult<string> => {
+      try {
+        const result = getManager().createSkill(params)
+        if (result.success && result.id) return { success: true, data: result.id }
+        return { success: false, error: result.error }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.SKILL_UPDATE,
+    (_event, id: string, params: SkillUpdateParams): IpcResult<boolean> => {
+      try {
+        if (!id) return { success: false, error: 'Skill ID is required' }
+        const result = getManager().updateSkill(id, params)
+        if (result.success) return { success: true, data: true }
+        return { success: false, error: result.error }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
 }

@@ -132,4 +132,106 @@ export function registerMcpHandlers(getServices: () => McpServices): void {
       }
     },
   )
+
+  ipcMain.handle(
+    IPC_CHANNELS.MCP_START_SERVER,
+    async (_event, id: string): Promise<IpcResult<boolean>> => {
+      try {
+        if (!id) return { success: false, error: 'Server ID is required' }
+        const server = getServices().repository.get(id)
+        if (!server) return { success: false, error: 'Server not found' }
+        const result = await getServices().manager.startServer(id, {
+          transportType: server.transportType,
+          stdio:
+            server.transportType === 'stdio'
+              ? {
+                  command: (server.config as { command: string; args: string[] }).command,
+                  args: (server.config as { command: string; args: string[] }).args,
+                }
+              : undefined,
+          sse:
+            server.transportType === 'sse'
+              ? { url: (server.config as { url: string }).url }
+              : undefined,
+        })
+        return { success: true, data: result }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.MCP_STOP_SERVER,
+    async (_event, id: string): Promise<IpcResult<boolean>> => {
+      try {
+        if (!id) return { success: false, error: 'Server ID is required' }
+        await getServices().manager.stopServer(id)
+        return { success: true, data: true }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      }
+    },
+  )
+
+  ipcMain.handle(
+    IPC_CHANNELS.MCP_TEST_CONNECTION,
+    async (
+      _event,
+      params: McpServerAddParams,
+    ): Promise<IpcResult<{ success: boolean; toolCount: number; error?: string }>> => {
+      const { McpClientWrapper } = await import('../services/mcp-client')
+      const client = new McpClientWrapper()
+      try {
+        const connectResult = await client.connect({
+          transportType: params.transportType,
+          stdio:
+            params.transportType === 'stdio'
+              ? {
+                  command: (
+                    params.config as {
+                      command: string
+                      args: string[]
+                      env?: Record<string, string>
+                    }
+                  ).command,
+                  args: (
+                    params.config as {
+                      command: string
+                      args: string[]
+                      env?: Record<string, string>
+                    }
+                  ).args,
+                  env: (
+                    params.config as {
+                      command: string
+                      args: string[]
+                      env?: Record<string, string>
+                    }
+                  ).env,
+                }
+              : undefined,
+          sse:
+            params.transportType === 'sse'
+              ? {
+                  url: (params.config as { url: string; headers?: Record<string, string> }).url,
+                }
+              : undefined,
+        })
+        if (!connectResult.success) {
+          return { success: false, data: { success: false, toolCount: 0, error: connectResult.error } }
+        }
+        const toolsResult = await client.listTools()
+        let toolCount = 0
+        if (toolsResult.success && toolsResult.data) {
+          toolCount = toolsResult.data.length
+        }
+        return { success: true, data: { success: true, toolCount } }
+      } catch (error) {
+        return { success: false, error: String(error) }
+      } finally {
+        await client.disconnect()
+      }
+    },
+  )
 }

@@ -18,6 +18,8 @@ import type {
   McpToolResult,
   ModelInfo,
   CreateConversationWithConfigParams,
+  SkillCreateParams,
+  SkillUpdateParams,
   IpcResult,
 } from '@shared/types'
 
@@ -257,6 +259,14 @@ export function useElectron(): CustomAPI {
     return api.deleteSkill(id)
   }
 
+  function createSkill(params: SkillCreateParams): Promise<IpcResult<string>> {
+    return api.createSkill(params)
+  }
+
+  function updateSkill(id: string, params: SkillUpdateParams): Promise<IpcResult<boolean>> {
+    return api.updateSkill(id, params)
+  }
+
   function listMcpServers(): Promise<IpcResult<McpServerConfig[]>> {
     return api.listMcpServers()
   }
@@ -293,6 +303,20 @@ export function useElectron(): CustomAPI {
     serverId: string,
   ): Promise<IpcResult<{ connected: boolean; error?: string }>> {
     return api.getMcpServerStatus(serverId)
+  }
+
+  function startMcpServer(id: string): Promise<IpcResult<boolean>> {
+    return api.startMcpServer(id)
+  }
+
+  function stopMcpServer(id: string): Promise<IpcResult<boolean>> {
+    return api.stopMcpServer(id)
+  }
+
+  function testMcpConnection(
+    params: McpServerAddParams,
+  ): Promise<IpcResult<{ success: boolean; toolCount: number; error?: string }>> {
+    return api.testMcpConnection(params)
   }
 
   function listAvailableModels(): Promise<IpcResult<ModelInfo[]>> {
@@ -342,6 +366,8 @@ export function useElectron(): CustomAPI {
     getSkill,
     reloadSkills,
     deleteSkill,
+    createSkill,
+    updateSkill,
     listMcpServers,
     getMcpServer,
     addMcpServer,
@@ -350,6 +376,9 @@ export function useElectron(): CustomAPI {
     listMcpTools,
     executeMcpTool,
     getMcpServerStatus,
+    startMcpServer,
+    stopMcpServer,
+    testMcpConnection,
     listAvailableModels,
     createConversationWithConfig,
     switchModel,

@@ -46,6 +46,8 @@ export const IPC_CHANNELS = {
   SKILL_GET: 'skill-get',
   SKILL_RELOAD: 'skill-reload',
   SKILL_DELETE: 'skill-delete',
+  SKILL_CREATE: 'skill-create',
+  SKILL_UPDATE: 'skill-update',
 
   // MCP channels
   MCP_LIST_SERVERS: 'mcp-list-servers',
@@ -56,6 +58,9 @@ export const IPC_CHANNELS = {
   MCP_LIST_TOOLS: 'mcp-list-tools',
   MCP_EXECUTE_TOOL: 'mcp-execute-tool',
   MCP_GET_SERVER_STATUS: 'mcp-get-server-status',
+  MCP_START_SERVER: 'mcp-start-server',
+  MCP_STOP_SERVER: 'mcp-stop-server',
+  MCP_TEST_CONNECTION: 'mcp-test-connection',
 
   // Model channels
   MODEL_LIST_AVAILABLE: 'model-list-available',
@@ -224,14 +229,31 @@ export interface AgentUpdateParams {
 export interface McpServerAddParams {
   name: string
   transportType: McpTransportType
-  config: { command: string; args: string[] } | { url: string }
+  config:
+    | { command: string; args: string[]; env?: Record<string, string> }
+    | { url: string; headers?: Record<string, string> }
   enabled?: boolean
 }
 
 export interface McpServerUpdateParams {
   name?: string
   transportType?: McpTransportType
-  config?: { command: string; args: string[] } | { url: string }
+  config?:
+    | { command: string; args: string[]; env?: Record<string, string> }
+    | { url: string; headers?: Record<string, string> }
+  enabled?: boolean
+}
+
+export interface SkillCreateParams {
+  name: string
+  description: string
+  content: string
+}
+
+export interface SkillUpdateParams {
+  name?: string
+  description?: string
+  content?: string
   enabled?: boolean
 }
 
@@ -289,6 +311,8 @@ export interface CustomAPI {
   getSkill: (id: string) => Promise<IpcResult<SkillConfig | null>>
   reloadSkills: () => Promise<IpcResult<boolean>>
   deleteSkill: (id: string) => Promise<IpcResult<boolean>>
+  createSkill: (params: SkillCreateParams) => Promise<IpcResult<string>>
+  updateSkill: (id: string, params: SkillUpdateParams) => Promise<IpcResult<boolean>>
 
   // MCP
   listMcpServers: () => Promise<IpcResult<McpServerConfig[]>>
@@ -305,6 +329,11 @@ export interface CustomAPI {
   getMcpServerStatus: (
     serverId: string,
   ) => Promise<IpcResult<{ connected: boolean; error?: string }>>
+  startMcpServer: (id: string) => Promise<IpcResult<boolean>>
+  stopMcpServer: (id: string) => Promise<IpcResult<boolean>>
+  testMcpConnection: (
+    params: McpServerAddParams,
+  ) => Promise<IpcResult<{ success: boolean; toolCount: number; error?: string }>>
 
   // Model
   listAvailableModels: () => Promise<IpcResult<ModelInfo[]>>

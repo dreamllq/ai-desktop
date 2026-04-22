@@ -26,6 +26,16 @@ const router = createRouter({
           name: 'settings-llm',
           component: () => import('@renderer/views/settings/LlmSettings.vue'),
         },
+        {
+          path: 'mcp',
+          name: 'settings-mcp',
+          component: () => import('@renderer/views/settings/McpSettings.vue'),
+        },
+        {
+          path: 'skills',
+          name: 'settings-skills',
+          component: () => import('@renderer/views/settings/SkillSettings.vue'),
+        },
       ],
     },
   ],

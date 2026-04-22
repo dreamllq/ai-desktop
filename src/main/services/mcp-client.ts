@@ -1,4 +1,5 @@
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js'
 import type { McpTransportType, ToolDefinition, ToolResult } from '../../shared/types/agent'
@@ -6,7 +7,7 @@ import type { McpTransportType, ToolDefinition, ToolResult } from '../../shared/
 export interface McpClientConnectConfig {
   transportType: McpTransportType
   stdio?: { command: string; args?: string[]; env?: Record<string, string> }
-  sse?: { url: string }
+  sse?: { url: string; headers?: Record<string, string> }
 }
 
 export interface McpClientResult<T> {
@@ -35,8 +36,9 @@ export class McpClientWrapper {
           env: config.stdio.env,
         })
       } else if (config.transportType === 'sse' && config.sse) {
-        // SSE support deferred — transport requires additional auth setup
-        return { success: false, error: 'SSE transport not yet supported' }
+        this.transport = new SSEClientTransport(new URL(config.sse.url), {
+          requestInit: config.sse.headers ? { headers: config.sse.headers } : undefined,
+        })
       } else {
         return { success: false, error: `Unsupported transport type: ${config.transportType}` }
       }

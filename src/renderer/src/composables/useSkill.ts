@@ -1,9 +1,12 @@
-import type { IpcResult, SkillConfig } from '@shared/types'
+import type { IpcResult, SkillConfig, SkillCreateParams, SkillUpdateParams } from '@shared/types'
 
 export function useSkill(): {
   listSkills: () => Promise<IpcResult<SkillConfig[]>>
   getSkill: (id: string) => Promise<IpcResult<SkillConfig | null>>
   reloadSkills: () => Promise<IpcResult<boolean>>
+  deleteSkill: (id: string) => Promise<IpcResult<boolean>>
+  createSkill: (params: SkillCreateParams) => Promise<IpcResult<string>>
+  updateSkill: (id: string, params: SkillUpdateParams) => Promise<IpcResult<boolean>>
 } {
   async function listSkills(): Promise<IpcResult<SkillConfig[]>> {
     return window.api.listSkills()
@@ -17,5 +20,17 @@ export function useSkill(): {
     return window.api.reloadSkills()
   }
 
-  return { listSkills, getSkill, reloadSkills }
+  async function deleteSkill(id: string): Promise<IpcResult<boolean>> {
+    return window.api.deleteSkill(id)
+  }
+
+  async function createSkill(params: SkillCreateParams): Promise<IpcResult<string>> {
+    return window.api.createSkill(params)
+  }
+
+  async function updateSkill(id: string, params: SkillUpdateParams): Promise<IpcResult<boolean>> {
+    return window.api.updateSkill(id, params)
+  }
+
+  return { listSkills, getSkill, reloadSkills, deleteSkill, createSkill, updateSkill }
 }
