@@ -244,8 +244,8 @@ onMounted(() => {
               </button>
             </template>
           </div>
-          <!-- Enable/Disable Toggle -->
-          <label class="relative inline-flex cursor-pointer items-center">
+          <!-- Enable/Disable Toggle (not for built-in skills) -->
+          <label v-if="skill.source !== 'built-in'" class="relative inline-flex cursor-pointer items-center">
             <input
               type="checkbox"
               :checked="skill.enabled"

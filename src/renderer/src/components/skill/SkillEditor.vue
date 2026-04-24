@@ -30,6 +30,10 @@ function generateTemplate(): string {
   return `---\nname: ${name}\nversion: 1.0.0\ndescription: ${desc}\nrequiredTools: []\n---\n\n# 在此编写技能指令...\n`
 }
 
+function reconstructFullContent(skill: SkillConfig): string {
+  return `---\nname: ${skill.manifest.name}\nversion: ${skill.manifest.version}\ndescription: ${skill.manifest.description}\nrequiredTools: ${JSON.stringify(skill.manifest.requiredTools)}\n---\n\n${skill.content}`
+}
+
 watch(
   () => [form.name, form.description],
   () => {
@@ -43,7 +47,7 @@ onMounted(() => {
   if (props.skill) {
     form.name = props.skill.name
     form.description = props.skill.description
-    form.content = props.skill.content
+    form.content = reconstructFullContent(props.skill)
   } else if (!props.readOnly) {
     form.content = generateTemplate()
   }
