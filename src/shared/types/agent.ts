@@ -70,6 +70,7 @@ export interface McpServerConfig {
   transportType: McpTransportType
   config: { command: string; args: string[] } | { url: string }
   enabled: boolean
+  source?: SkillSource
   createdAt: number
   updatedAt: number
 }

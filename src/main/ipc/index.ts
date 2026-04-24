@@ -40,6 +40,7 @@ export async function registerIpcHandlers(): Promise<void> {
 
   await agentRegistry.initialize()
   await skillManager.initialize()
+  await mcpManager.initialize()
 
   const toolRegistry = getToolRegistry()
   toolRegistry.initialize(mcpManager)

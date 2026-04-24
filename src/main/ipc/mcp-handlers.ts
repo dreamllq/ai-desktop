@@ -8,6 +8,7 @@ import type {
   McpToolDefinition,
   McpToolResult,
 } from '../../shared/types/index'
+import type { SkillSource } from '../../shared/types/agent'
 import type { McpServerRepository } from '../repositories/mcp-server'
 import type { McpManager } from '../services/mcp-manager'
 
@@ -16,11 +17,42 @@ export interface McpServices {
   manager: McpManager
 }
 
+const BUILT_IN_SOURCE_MAP: Record<string, string> = {
+  'builtin-filesystem': 'filesystem',
+  'builtin-commands': 'commands',
+}
+
+function getBuiltInServers(): McpServerConfig[] {
+  return [
+    {
+      id: 'builtin-filesystem',
+      name: '文件系统',
+      transportType: 'stdio' as const,
+      config: { command: '[内置]', args: [] },
+      enabled: true,
+      source: 'built-in' as SkillSource,
+      createdAt: 0,
+      updatedAt: 0,
+    },
+    {
+      id: 'builtin-commands',
+      name: '命令执行',
+      transportType: 'stdio' as const,
+      config: { command: '[内置]', args: [] },
+      enabled: true,
+      source: 'built-in' as SkillSource,
+      createdAt: 0,
+      updatedAt: 0,
+    },
+  ]
+}
+
 export function registerMcpHandlers(getServices: () => McpServices): void {
   ipcMain.handle(IPC_CHANNELS.MCP_LIST_SERVERS, (): IpcResult<McpServerConfig[]> => {
     try {
       const servers = getServices().repository.list()
-      return { success: true, data: servers }
+      const builtIn = getBuiltInServers()
+      return { success: true, data: [...builtIn, ...servers] }
     } catch (error) {
       return { success: false, error: String(error) }
     }
@@ -85,7 +117,8 @@ export function registerMcpHandlers(getServices: () => McpServices): void {
       try {
         if (!serverId) return { success: false, error: 'Server ID is required' }
         const allTools = await getServices().manager.listAvailableTools()
-        const serverTools = allTools.filter((t) => t.source === serverId)
+        const actualSource = BUILT_IN_SOURCE_MAP[serverId] || serverId
+        const serverTools = allTools.filter((t) => t.source === actualSource)
         return { success: true, data: serverTools }
       } catch (error) {
         return { success: false, error: String(error) }
@@ -119,6 +152,9 @@ export function registerMcpHandlers(getServices: () => McpServices): void {
     (_event, serverId: string): IpcResult<{ connected: boolean; error?: string }> => {
       try {
         if (!serverId) return { success: false, error: 'Server ID is required' }
+        if (serverId.startsWith('builtin-')) {
+          return { success: true, data: { connected: true } }
+        }
         const status = getServices().manager.getServerStatus(serverId)
         return {
           success: true,

@@ -25,7 +25,12 @@ async function executeDelete(id: string): Promise<void> {
   deletingId.value = null
 }
 
+function isBuiltIn(server: McpServerConfig): boolean {
+  return server.source === 'built-in'
+}
+
 function getConfigDisplay(server: McpServerConfig): string {
+  if (server.source === 'built-in') return '内置工具'
   if (server.transportType === 'stdio') {
     const cfg = server.config as { command: string; args: string[] }
     return `${cfg.command} ${cfg.args.join(' ')}`
@@ -156,6 +161,13 @@ onUnmounted(() => {
             >
               {{ server.transportType }}
             </span>
+            <!-- Built-in Badge -->
+            <span
+              v-if="isBuiltIn(server)"
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700"
+            >
+              内置
+            </span>
             <!-- Connection Status Badge -->
             <span
               class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
@@ -215,46 +227,54 @@ onUnmounted(() => {
         <!-- Card Actions -->
         <div v-else class="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
           <div class="flex gap-2">
-            <!-- Start/Stop -->
-            <button
-              v-if="store.serverStatuses.get(server.id)?.connected"
-              class="rounded-md px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
-              @click="store.stopServer(server.id)"
-            >
-              停止
-            </button>
-            <button
-              v-else
-              class="rounded-md px-2.5 py-1 text-xs font-medium text-green-600 transition-colors hover:bg-green-50"
-              @click="store.startServer(server.id)"
-            >
-              启动
-            </button>
-            <!-- Tools (only if connected) -->
-            <button
-              v-if="store.serverStatuses.get(server.id)?.connected"
-              class="rounded-md px-2.5 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
-              @click="props.showTools(server)"
-            >
-              工具
-            </button>
-            <!-- Edit -->
-            <button
-              class="rounded-md px-2.5 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
-              @click="props.showForm(server)"
-            >
-              编辑
-            </button>
-            <!-- Delete -->
-            <button
-              class="rounded-md px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
-              @click="confirmDelete(server.id)"
-            >
-              删除
-            </button>
+            <!-- Built-in server: View tools only -->
+            <template v-if="isBuiltIn(server)">
+              <button
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
+                @click="props.showTools(server)"
+              >
+                查看工具
+              </button>
+            </template>
+            <!-- User server: Full actions -->
+            <template v-else>
+              <button
+                v-if="store.serverStatuses.get(server.id)?.connected"
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
+                @click="store.stopServer(server.id)"
+              >
+                停止
+              </button>
+              <button
+                v-else
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-green-600 transition-colors hover:bg-green-50"
+                @click="store.startServer(server.id)"
+              >
+                启动
+              </button>
+              <button
+                v-if="store.serverStatuses.get(server.id)?.connected"
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
+                @click="props.showTools(server)"
+              >
+                工具
+              </button>
+              <button
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-50"
+                @click="props.showForm(server)"
+              >
+                编辑
+              </button>
+              <button
+                class="rounded-md px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50"
+                @click="confirmDelete(server.id)"
+              >
+                删除
+              </button>
+            </template>
           </div>
-          <!-- Enable/Disable Toggle -->
-          <label class="relative inline-flex cursor-pointer items-center">
+          <!-- Toggle: only for user servers -->
+          <label v-if="!isBuiltIn(server)" class="relative inline-flex cursor-pointer items-center">
             <input
               type="checkbox"
               :checked="server.enabled"
