@@ -27,7 +27,7 @@ function showList(): void {
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <McpServerList v-if="view === 'list'" :show-form="showForm" :show-tools="showTools" />
     <McpServerForm
       v-else-if="view === 'form'"

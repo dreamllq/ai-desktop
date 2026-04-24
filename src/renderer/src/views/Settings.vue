@@ -73,7 +73,7 @@ const menuItems = [
     </aside>
 
     <!-- Right content area -->
-    <div class="flex-1 overflow-auto bg-gray-50">
+    <div class="flex-1 overflow-hidden bg-gray-50">
       <RouterView />
     </div>
   </div>

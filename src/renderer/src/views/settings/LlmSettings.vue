@@ -19,7 +19,7 @@ function showList(): void {
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <LlmProviderList v-if="view === 'list'" :show-form="showForm" />
     <LlmProviderForm
       v-else

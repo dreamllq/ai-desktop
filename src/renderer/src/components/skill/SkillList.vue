@@ -43,7 +43,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-6">
+  <div class="h-full overflow-y-auto p-6">
     <!-- Header -->
     <div class="mb-6 flex items-center justify-between">
       <div>

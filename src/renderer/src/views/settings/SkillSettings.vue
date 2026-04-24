@@ -22,7 +22,7 @@ function showList(): void {
 </script>
 
 <template>
-  <div>
+  <div class="h-full">
     <SkillList v-if="view === 'list'" :show-editor="showEditor" />
     <SkillEditor
       v-else

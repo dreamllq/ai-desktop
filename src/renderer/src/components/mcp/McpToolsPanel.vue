@@ -63,7 +63,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="h-full overflow-y-auto">
     <!-- Header -->
     <div class="flex items-center gap-3 border-b border-gray-200 bg-white px-5 py-3">
       <button
